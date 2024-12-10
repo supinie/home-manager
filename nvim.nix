@@ -1,5 +1,16 @@
 { pkgs, ... }:
 
+let
+    vim-sage = pkgs.vimUtils.buildVimPlugin {
+        name = "vim-sage";
+        src = pkgs.fetchFromGitHub {
+            owner = "petRUShka";
+            repo = "vim-sage";
+            rev = "4b036eead948e3ae1d414efdeefe11f7543fc366";
+            hash = "sha256-byWgNJE9BDW91WiUoRhMK1BK58tAFBHFcTiLGLHUt3I=";
+        };
+    };
+in
 {
     enable = true;
     vimAlias = true;
@@ -10,6 +21,7 @@
             coc.preferences.formatOnSaveFiletypes = [
                 "nix"
                 "rust"
+                "python"
             ];
             rust-analyzer.enable = true;
             rust-analyzer.cargo.allFeatures = true;
@@ -19,9 +31,14 @@
                     filetypes = [ "nix" ];
                     settings.nixd.formatting.command = [ "nixfmt" ];
                 };
+                python = {
+                    command = "pyright";
+                    filetypes = [ "py" ];
+                };
             };
         };
     };
+    withPython3 = true;
     plugins = with pkgs.vimPlugins; [
         {
             plugin = coc-nvim;
@@ -37,6 +54,8 @@
         coc-json
         coc-go
         coc-sh
+        coc-pyright
+        vim-sage
         plenary-nvim
         indentLine
         # vim-system-copy

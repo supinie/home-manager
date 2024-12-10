@@ -56,6 +56,7 @@
 
         # # python
         # python3
+        pyright
 
         # apps
         firefox
