@@ -22,7 +22,7 @@ elif [[ "$@" == "python" ]]; then
 elif [[ "$@" == "fplll" ]]; then
     BUILDINPUTS="gcc python3 sage python312Packages.fpylll fplll"
 elif [[ "$@" == "tex" ]]; then
-    BUILDINPUTS="texliveTeTeX texlivePackages.beamer"
+    BUILDINPUTS="texliveFull texlivePackages.beamer"
 else
     BUILDINPUTS="$@"
 fi

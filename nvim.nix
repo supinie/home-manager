@@ -22,6 +22,7 @@ in
                 "nix"
                 "rust"
                 "python"
+                "fsharp"
             ];
             rust-analyzer.enable = true;
             rust-analyzer.cargo.allFeatures = true;
@@ -55,6 +56,8 @@ in
         coc-go
         coc-sh
         coc-pyright
+        coc-vimtex
+        Ionide-vim
         vim-sage
         plenary-nvim
         indentLine
@@ -151,6 +154,9 @@ in
         endif
         autocmd BufEnter *.tex set conceallevel=1
         autocmd BufEnter *.tex set concealcursor=nc
+
+        let g:fsharp#fsi_command = "/nix/store/2ashk2ig3vb8s54mpyc2w5dgr4saqcvj-dotnet-sdk-6.0.427/bin/dotnet fsi"
+        set shell=/home/jcl24/.nix-profile/bin/zsh
     '';
     extraLuaConfig = ''
         local config = {

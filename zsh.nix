@@ -18,6 +18,7 @@
     # To get around apparmor on Ubuntu 24.04
         # echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
     initExtra = ''
+        unalias gap
         source $HOME/git/.dotfiles/cargo/.config/eza_theme.sh
         any-nix-shell zsh --info-right | source /dev/stdin
         eval "$(direnv hook zsh)"
