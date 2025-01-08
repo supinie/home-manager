@@ -64,6 +64,8 @@ in
         bind-key -T copy-mode-vi 'C-k' select-pane -U
         bind-key -T copy-mode-vi 'C-l' select-pane -R
         bind-key -T copy-mode-vi 'C-\' select-pane -l
+
+        set -s set-clipboard on
     '';
 }
         # is_vim="ps -o state= -o comm= -t '#{pane_tty}' \

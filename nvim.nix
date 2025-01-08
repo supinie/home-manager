@@ -10,6 +10,16 @@ let
             hash = "sha256-byWgNJE9BDW91WiUoRhMK1BK58tAFBHFcTiLGLHUt3I=";
         };
     };
+
+    vim-system-copy = pkgs.vimUtils.buildVimPlugin {
+        name = "vim-system-copy";
+        src = pkgs.fetchFromGitHub {
+            owner = "christoomey";
+            repo = "vim-system-copy";
+            rev = "8abd9ed21016bdc21b458c79da3b9ac0ee25c1ce";
+            hash = "sha256-Z+5Kv1jzzmKSmTtswd1XIskPhmrIHTPmJ+F/gX5/TiE=";
+        };
+    };
 in
 {
     enable = true;
@@ -61,7 +71,7 @@ in
         vim-sage
         plenary-nvim
         indentLine
-        # vim-system-copy
+        vim-system-copy
         {
             plugin = vim-tmux-navigator;
             config = ''
