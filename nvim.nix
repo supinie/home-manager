@@ -20,6 +20,16 @@ let
             hash = "sha256-Z+5Kv1jzzmKSmTtswd1XIskPhmrIHTPmJ+F/gX5/TiE=";
         };
     };
+
+    vim-rainbow = pkgs.vimUtils.buildVimPlugin {
+        name = "vim-rainbow";
+        src = pkgs.fetchFromGitHub {
+            owner = "frazrepo";
+            repo = "vim-rainbow";
+            rev = "a6c7fd5a2b0193b5dbd03f62ad820b521dea3290";
+            hash = "sha256-zha3BNZXJSgEWEyh8fcy1+x3Y+c1DV1eTMa/AQ+sj7M=";
+        };
+    };
 in
 {
     enable = true;
@@ -78,10 +88,10 @@ in
                 let g:tmux_navigator_disable_when_zoomed = 1
             '';
         }
-        # {
-        #     plugin = vim-rainbow;
-        #     config = "let g:rainbow_active = 1";
-        # }
+        {
+            plugin = vim-rainbow;
+            config = "let g:rainbow_active = 1";
+        }
         lualine-nvim
         nvim-web-devicons
         vim-commentary
