@@ -23,6 +23,7 @@
   home.packages = with pkgs; [
         # terminal
         # kitty
+        ghostty
         kitty-themes
         zsh
         oh-my-zsh
@@ -134,6 +135,7 @@
         tmux = import ./tmux.nix { inherit pkgs; };
         git = import ./git.nix;
         kitty = import ./kitty.nix { inherit config; inherit pkgs; };
+        ghostty = import ./ghostty.nix;
         bacon = import ./bacon.nix;
         direnv = import ./direnv.nix;
         zathura = import ./zathura.nix;
