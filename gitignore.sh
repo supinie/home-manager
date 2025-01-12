@@ -17,3 +17,4 @@ fi
 
 cp $HOME/.config/home-manager/gitignore/$LANGUAGE .gitignore
 echo "*.swp" >> .gitignore
+echo ".direnv/" >> .gitignore
