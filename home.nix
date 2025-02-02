@@ -68,6 +68,8 @@
         libreoffice
         thunderbird
         gnome-tweaks
+        rofi
+        mathematica
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -86,6 +88,7 @@
   nixpkgs.config.allowUnfreePredicate = pkg:
         builtins.elem (lib.getName pkg) [
             "obsidian"
+            "mathematica"
         ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
