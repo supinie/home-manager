@@ -43,6 +43,7 @@ in
                 "rust"
                 "python"
                 "fsharp"
+                "c"
             ];
             rust-analyzer.enable = true;
             rust-analyzer.cargo.allFeatures = true;
@@ -55,6 +56,14 @@ in
                 python = {
                     command = "pyright";
                     filetypes = [ "py" ];
+                };
+                c = {
+                    command = "clangd";
+                    filetypes = [ "c" ];
+                    settings.clangd.formatting.command = [ 
+                        "clang-format"
+                        "-style={IndentWidth: 4, TabWidth: 4, UseTab: Never}"
+                    ];
                 };
             };
         };
