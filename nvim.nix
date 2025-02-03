@@ -62,7 +62,6 @@ in
                     filetypes = [ "c" ];
                     settings.clangd.formatting.command = [ 
                         "clang-format"
-                        "-style={IndentWidth: 4, TabWidth: 4, UseTab: Never}"
                     ];
                 };
             };
