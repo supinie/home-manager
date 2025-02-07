@@ -168,11 +168,30 @@ in
         set splitbelow
         set splitright
 
+        nnoremap <S-Tab> :Lex<CR>
         let g:netrw_banner = 0
         let g:netrw_liststyle = 3
         let g:netrw_browse_split = 4
         let g:netrw_altv = 1
         let g:netrw_winsize = 25
+
+        let g:netrw_fastbrowse = 0
+        autocmd FileType netrw setl bufhidden=wipe
+        function! CloseNetrw() abort
+          for bufn in range(1, bufnr('$'))
+            if bufexists(bufn) && getbufvar(bufn, '&filetype') ==# 'netrw'
+              silent! execute 'bwipeout ' . bufn
+              if getline(2) =~# '^" Netrw '
+                silent! bwipeout
+              endif
+              return
+            endif
+          endfor
+        endfunction
+        augroup closeOnOpen
+          autocmd!
+          autocmd BufWinEnter * if getbufvar(winbufnr(winnr()), "&filetype") != "netrw"|call CloseNetrw()|endif
+        aug END
 
         set listchars=tab:➤\ ,trail:◆ et listchars=tab:➤\ ,trail:◆
 
