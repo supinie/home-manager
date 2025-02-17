@@ -9,8 +9,8 @@
         cat = "bat";
         ls = "eza";
         la = "ls -al --git";
-        cdg = "git rev-parse --is-inside-work-tree &>/dev/null && cd '$(git rev-parse --show-toplevel)'";
         ":q" = "exit";
+        cdg = "git rev-parse --is-inside-work-tree &>/dev/null && cd $(git rev-parse --show-toplevel)";
         shell_init = "$HOME/.config/home-manager/setup_nix.sh";
         ignore_init = "$HOME/.config/home-manager/gitignore.sh";
     };

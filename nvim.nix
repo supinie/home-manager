@@ -131,6 +131,15 @@ in
             '';
         }
         {
+            plugin = ultisnips;
+            config = ''
+                let g:UltiSnipsExpandTrigger = '<Tab>'
+                let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+                let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+                let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/home-manager']
+            '';
+        }
+        {
             plugin = telescope-nvim;
             config = ''
                 nnoremap <C-p> <cmd>lua require('telescope.builtin').git_files()<cr>
@@ -195,7 +204,7 @@ in
 
         set listchars=tab:➤\ ,trail:◆ et listchars=tab:➤\ ,trail:◆
 
-        let filetypes = ['json', 'tex']
+        let filetypes = ['json']
         if index(filetypes, &filetype) != -1
             set conceallevel=0
         endif
