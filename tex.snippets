@@ -5,7 +5,7 @@ endglobal
 
 snippet beg "begin{} / end{}" bA
 \begin{$1}
-    $0
+	$0
 \end{$1}
 endsnippet
 
@@ -15,6 +15,18 @@ endsnippet
 
 snippet subsec "subsection{}" bA
 \subsection{$1}
+endsnippet
+
+snippet $ "math" A
+\($1\) $0
+endsnippet
+
+snippet \[ "mathblock" A
+\[
+	$1
+\]
+
+$0
 endsnippet
 
 snippet bf "boldtext" w
@@ -47,47 +59,52 @@ endsnippet
 
 context "math()"
 snippet bf "boldfont" iA
-\mathbf{$1} $0
+\mathbf{$1}$0
 endsnippet
 
 context "math()"
 snippet cal "mathcal" iA
-\mathcal{$1} $0
+\mathcal{$1}$0
 endsnippet
 
 context "math()"
 snippet te "text" iA
-\text{$1} $0
+\text{$1}$0
 endsnippet
 
 context "math()"
 snippet it "italic" iA
-\mathit{$1} $0
+\mathit{$1}$0
 endsnippet
 
 context "math()"
 snippet bb "blackboard" iA
-\mathbb{$1} $0
+\mathbb{$1}$0
 endsnippet
 
 context "math()"
 snippet ZZ "integers" iA
-\mathbb{Z} $0
+\mathbb{Z}$0
 endsnippet
 
 context "math()"
 snippet RR "reals" iA
-\mathbb{R} $0
+\mathbb{R}$0
 endsnippet
 
 context "math()"
 snippet QQ "rationals" iA
-\mathbb{Q} $0
+\mathbb{Q}$0
 endsnippet
 
 context "math()"
 snippet FF "field" iA
-\mathbb{F} $0
+\mathbb{F}$0
+endsnippet
+
+context "math()"
+snippet iff "iff" iA
+\iff $0
 endsnippet
 
 context "math()"
