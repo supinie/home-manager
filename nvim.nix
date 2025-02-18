@@ -91,6 +91,12 @@ in
 
             " Symbol renaming
             nmap <leader>rn <Plug>(coc-rename)
+
+            " Remap keys for applying code actions at the cursor position
+            nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+
+            " Remap keys for applying refactor code actions
+            nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
         '';
     };
     withPython3 = true;
@@ -239,6 +245,9 @@ in
 
         let g:fsharp#fsi_command = "/nix/store/2ashk2ig3vb8s54mpyc2w5dgr4saqcvj-dotnet-sdk-6.0.427/bin/dotnet fsi"
         set shell=/home/jcl24/.nix-profile/bin/zsh
+
+        " set T to go to last buffer
+        noremap T <C-^>
     '';
     extraLuaConfig = ''
         local config = {
