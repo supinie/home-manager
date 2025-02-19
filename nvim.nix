@@ -248,6 +248,8 @@ in
 
         " set T to go to last buffer
         noremap T <C-^>
+
+        let mapleader = " "
     '';
     extraLuaConfig = ''
         local config = {
