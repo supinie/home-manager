@@ -65,6 +65,7 @@ in
                     ];
                 };
             };
+	    snippets.ultisnips.directories = ["~/.config/home-manager"];
         };
         pluginConfig = ''
             " Use `[g` and `]g` to navigate diagnostics
@@ -106,9 +107,9 @@ in
             config = ''
                 noremap <silent> <C-t> :10split <bar> :term <CR>
                 tnoremap <Esc> <C-\><C-n>
-                "allow coc completion on tab
-                inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<TAB>"
             '';
+                # "allow coc completion on tab
+                # inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<TAB>"
         }
         coc-rust-analyzer
         # coc-nix
@@ -117,6 +118,19 @@ in
         coc-sh
         coc-pyright
         coc-vimtex
+        {
+            plugin = coc-snippets;
+            config = ''
+                inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#_select_confirm() : coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',\'\'])\<CR>" : CheckBackspace() ? "\<TAB>" : coc#refresh()
+
+                function! CheckBackspace() abort
+                    let col = col('.') - 1
+                    return !col || getline('.')[col - 1]  =~# '\s'
+                endfunction
+
+                let g:coc_snippet_next = '<tab>'
+            '';
+        }
         Ionide-vim
         vim-sage
         plenary-nvim
@@ -160,15 +174,6 @@ in
                 set conceallevel=1
                 set concealcursor=nc
                 let g:tex_conceal='abdmg'
-            '';
-        }
-        {
-            plugin = ultisnips;
-            config = ''
-                let g:UltiSnipsExpandTrigger = '<Tab>'
-                let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-                let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-                let g:UltiSnipsSnippetDirectories = [$HOME.'/.config/home-manager']
             '';
         }
         {
