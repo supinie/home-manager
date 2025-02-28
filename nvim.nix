@@ -170,10 +170,22 @@ in
                       \]
                 let g:vimtex_view_method = 'zathura'
                 let g:tex_flavor='latex'
-                let g:vimtex_quickfix_mode=0
                 set conceallevel=1
                 set concealcursor=nc
                 let g:tex_conceal='abdmg'
+
+                " Function to toggle vimtex_quickfix_mode
+                function! ToggleVimtexQuickfixMode()
+                    if g:vimtex_quickfix_mode == 1
+                        let g:vimtex_quickfix_mode = 0
+                    else
+                        let g:vimtex_quickfix_mode = 1
+                    endif
+                    echo "vimtex_quickfix_mode is now " . g:vimtex_quickfix_mode
+                endfunction
+
+                " Map Shift-Q to toggle vimtex_quickfix_mode
+                nnoremap <S-q> :call ToggleVimtexQuickfixMode()<CR>
             '';
         }
         {
