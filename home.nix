@@ -44,6 +44,8 @@
         gh
         nixpkgs-review
         tdf
+        ddgr
+        w3m
         
         # nix utils
         nh
@@ -70,6 +72,8 @@
         gnome-tweaks
         rofi
         mathematica
+        servo
+        librewolf
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the

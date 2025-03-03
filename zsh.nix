@@ -22,6 +22,7 @@
         source $HOME/git/.dotfiles/cargo/.config/eza_theme.sh
         any-nix-shell zsh --info-right | source /dev/stdin
         eval "$(direnv hook zsh)"
+        export BROWSER=w3m
     '';
 
     oh-my-zsh = {
