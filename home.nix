@@ -46,6 +46,7 @@
         tdf
         ddgr
         w3m
+        wmctrl
         
         # nix utils
         nh
@@ -74,6 +75,7 @@
         mathematica
         servo
         librewolf
+        signal-desktop
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -94,6 +96,11 @@
             "obsidian"
             "mathematica"
         ];
+
+  nix = {
+    package = pkgs.nix;
+    settings.experimental-features = [ "nix-command" "flakes" ];
+  };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -144,6 +151,7 @@
         bacon = import ./bacon.nix;
         direnv = import ./direnv.nix;
         zathura = import ./zathura.nix;
+        rofi = import ./rofi.nix;
 
 	home-manager.enable = true;
   };
