@@ -46,13 +46,13 @@
         tdf
         ddgr
         w3m
-        wmctrl
         
         # nix utils
         nh
         any-nix-shell
         direnv
         nixpkgs-review
+        gnomeExtensions.window-calls
 
         # # rust
         # rustup
@@ -154,5 +154,15 @@
         rofi = import ./rofi.nix;
 
 	home-manager.enable = true;
+  };
+
+  dconf = {
+    enable = true;
+    settings."org/gnome/shell" = {
+      disable-user-extensions = false;
+      enabled-extensions = with pkgs.gnomeExtensions; [
+        window-calls.extensionUuid
+      ];
+    };
   };
 }
