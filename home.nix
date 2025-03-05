@@ -46,6 +46,8 @@
         tdf
         ddgr
         w3m
+        wmctrl
+        fd
         
         # nix utils
         nh
