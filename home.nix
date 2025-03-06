@@ -48,6 +48,7 @@
         w3m
         wmctrl
         fd
+        hexyl
         
         # nix utils
         nh
