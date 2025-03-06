@@ -163,10 +163,13 @@ in
                 let g:vimtex_quickfix_ignore_filters = [
                       \ 'Underfull \\hbox',
                       \ 'Overfull \\hbox',
+                      \ 'Underfull \\vbox',
+                      \ 'Overfull \\vbox',
                       \ 'LaTeX Warning: .\+ float specifier changed to',
                       \ 'LaTeX hooks Warning',
                       \ 'Package siunitx Warning: Detected the "physics" package:',
                       \ 'Package hyperref Warning: Token not allowed in a PDF string',
+                      \ 'Missing ',
                       \]
                 let g:vimtex_view_method = 'zathura'
                 let g:tex_flavor='latex'
