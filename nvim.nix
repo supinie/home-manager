@@ -172,10 +172,8 @@ in
                       \ 'Missing ',
                       \]
                 let g:vimtex_view_method = 'zathura'
-                let g:tex_flavor='latex'
-                set conceallevel=1
-                set concealcursor=nc
                 let g:tex_conceal='abdmg'
+                let g:vimtex_callback_progpath = '/home/jcl24/.nix-profile/bin/nvim'
 
                 " Function to toggle vimtex_quickfix_mode
                 function! ToggleVimtexQuickfixMode()
