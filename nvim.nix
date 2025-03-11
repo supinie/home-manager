@@ -98,6 +98,9 @@ in
 
             " Remap keys for applying refactor code actions
             nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+
+            " Apply the most preferred quickfix action to fix diagnostic on the current line
+            nmap <leader>qf  <Plug>(coc-fix-current)
         '';
     };
     withPython3 = true;
@@ -266,8 +269,6 @@ in
 
         " set T to go to last buffer
         noremap T <C-^>
-
-        let mapleader = " "
     '';
     extraLuaConfig = ''
         local config = {
