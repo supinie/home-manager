@@ -23,6 +23,8 @@ elif [[ "$@" == "fplll" ]]; then
     BUILDINPUTS="gcc python3 sage python312Packages.fpylll fplll"
 elif [[ "$@" == "tex" ]]; then
     BUILDINPUTS="texliveFull texlivePackages.beamer"
+elif [[ "$@" == "c" ]]; then
+    BUILDINPUTS="gcc llvmPackages.clang-tools llvmPackages.clang gnumake cmake"
 else
     BUILDINPUTS="$@"
 fi
