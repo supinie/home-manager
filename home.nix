@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   nixGL.packages = import <nixgl> { inherit pkgs; };
@@ -21,71 +26,72 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-        # terminal
-        # kitty
-        ghostty
-        kitty-themes
-        zsh
-        oh-my-zsh
-        tmux
+    # terminal
+    # kitty
+    ghostty
+    kitty-themes
+    zsh
+    oh-my-zsh
+    tmux
 
-        # cmd utils
-        wget
-        curl
-        gnupg
-        git
-        neofetch
-        htop
-        bottom
-        bat
-        eza
-        ripgrep
-        jaq
-        gh
-        nixpkgs-review
-        tdf
-        ddgr
-        w3m
-        wmctrl
-        fd
-        hexyl
-        
-        # nix utils
-        nh
-        any-nix-shell
-        direnv
-        nixpkgs-review
-        gnomeExtensions.window-calls
+    # cmd utils
+    wget
+    curl
+    gnupg
+    git
+    neofetch
+    htop
+    bottom
+    bat
+    eza
+    ripgrep
+    ripgrep-all
+    jaq
+    gh
+    nixpkgs-review
+    tdf
+    ddgr
+    w3m
+    wmctrl
+    fd
+    hexyl
 
-        # # rust
-        # rustup
-        # gcc
-        # bacon
+    # nix utils
+    nh
+    any-nix-shell
+    direnv
+    nixpkgs-review
+    gnomeExtensions.window-calls
+    nixfmt-rfc-style
 
-        # # python
-        # python3
-        pyright
+    # # rust
+    # rustup
+    # gcc
+    # bacon
 
-        # apps
-        firefox
-        obsidian
-        teams-for-linux
-        zathura
-        libreoffice
-        thunderbird
-        gnome-tweaks
-        rofi
-        mathematica
-        servo
-        librewolf
-        signal-desktop
-        wasistlos
+    # # python
+    # python3
+    pyright
+
+    # apps
+    firefox
+    obsidian
+    teams-for-linux
+    zathura
+    libreoffice
+    thunderbird
+    gnome-tweaks
+    rofi
+    mathematica
+    servo
+    librewolf
+    signal-desktop
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
-        # nerdfonts.override { fonts = [ "Hack" ]; }
+    # nerdfonts.override { fonts = [ "Hack" ]; }
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
@@ -95,15 +101,19 @@
     # '')
   ];
 
-  nixpkgs.config.allowUnfreePredicate = pkg:
-        builtins.elem (lib.getName pkg) [
-            "obsidian"
-            "mathematica"
-        ];
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "obsidian"
+      "mathematica"
+    ];
 
   nix = {
     package = pkgs.nix;
-    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -146,18 +156,21 @@
 
   # Let Home Manager install and manage itself.
   programs = {
-        zsh = import ./zsh.nix;
-        neovim = import ./nvim.nix { inherit pkgs; };
-        tmux = import ./tmux.nix { inherit pkgs; };
-        git = import ./git.nix;
-        kitty = import ./kitty.nix { inherit config; inherit pkgs; };
-        ghostty = import ./ghostty.nix;
-        bacon = import ./bacon.nix;
-        direnv = import ./direnv.nix;
-        zathura = import ./zathura.nix;
-        rofi = import ./rofi.nix;
+    zsh = import ./zsh.nix;
+    neovim = import ./nvim.nix { inherit pkgs; };
+    tmux = import ./tmux.nix { inherit pkgs; };
+    git = import ./git.nix;
+    kitty = import ./kitty.nix {
+      inherit config;
+      inherit pkgs;
+    };
+    ghostty = import ./ghostty.nix;
+    bacon = import ./bacon.nix;
+    direnv = import ./direnv.nix;
+    zathura = import ./zathura.nix;
+    rofi = import ./rofi.nix;
 
-	home-manager.enable = true;
+    home-manager.enable = true;
   };
 
   dconf = {
