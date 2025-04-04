@@ -156,19 +156,19 @@
 
   # Let Home Manager install and manage itself.
   programs = {
-    zsh = import ./zsh.nix;
-    neovim = import ./nvim.nix { inherit pkgs; };
-    tmux = import ./tmux.nix { inherit pkgs; };
+    bacon = import ./bacon.nix;
+    direnv = import ./direnv.nix;
+    ghostty = import ./ghostty.nix;
     git = import ./git.nix;
     kitty = import ./kitty.nix {
       inherit config;
       inherit pkgs;
     };
-    ghostty = import ./ghostty.nix;
-    bacon = import ./bacon.nix;
-    direnv = import ./direnv.nix;
-    zathura = import ./zathura.nix;
+    neovim = import ./nvim.nix { inherit pkgs; };
     rofi = import ./rofi.nix;
+    tmux = import ./tmux.nix { inherit pkgs; };
+    zathura = import ./zathura.nix;
+    zsh = import ./zsh.nix;
 
     home-manager.enable = true;
   };
