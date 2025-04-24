@@ -47,6 +47,7 @@ in
       ];
       rust-analyzer.enable = true;
       rust-analyzer.cargo.allFeatures = true;
+      rust-analyzer.cargo.cfgs = [ ]; # https://github.com/rust-lang/rust-analyzer/issues/19658
       languageserver = {
         nix = {
           command = "nixd";
