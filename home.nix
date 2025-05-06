@@ -82,7 +82,7 @@
     thunderbird
     gnome-tweaks
     rofi
-    mathematica
+    # mathematica
     servo
     librewolf
     signal-desktop
