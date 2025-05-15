@@ -60,7 +60,9 @@ in
         };
         c = {
           command = "clangd";
-          filetypes = [ "c" ];
+          filetypes = [
+            "c"
+          ];
           settings.clangd.formatting.command = [
             "clang-format"
           ];
@@ -208,7 +210,7 @@ in
       plugin = gruvbox-material;
       config = "colorscheme gruvbox-material";
     }
-    obsidian-nvim
+    # obsidian-nvim
   ];
   extraPackages = with pkgs; [
     rust-analyzer
