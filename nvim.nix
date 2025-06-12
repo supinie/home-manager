@@ -62,6 +62,7 @@ in
           command = "clangd";
           filetypes = [
             "c"
+            "cpp"
           ];
           settings.clangd.formatting.command = [
             "clang-format"
