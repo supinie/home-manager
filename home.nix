@@ -55,6 +55,7 @@
     wmctrl
     fd
     hexyl
+    autorandr
 
     # nix utils
     nh
