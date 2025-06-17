@@ -5,6 +5,9 @@
   ...
 }:
 
+let
+  autorandr-launcher = pkgs.callPackage ./autorandr-launcher.nix { };
+in
 {
   nixGL.packages = import <nixgl> { inherit pkgs; };
   nixGL.defaultWrapper = "mesa";
@@ -56,6 +59,7 @@
     fd
     hexyl
     autorandr
+    autorandr-launcher
 
     # nix utils
     nh
@@ -87,6 +91,7 @@
     servo
     librewolf
     signal-desktop
+    feh
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
