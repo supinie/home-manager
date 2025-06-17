@@ -46,11 +46,11 @@ in
       ];
 
       keybindings = lib.mkOptionDefault {
-        "${mod}+q" = "exec 'kitty tmux'";
+        "${mod}+q" = "exec \"kitty tmux\"";
         "${mod}+f" = "exec firefox";
-        "${mod}+space" = "exec 'rofi -show drun'";
-        "${mod}+g" = "exec 'rofi -show recursivebrowser'";
-        "${mod}+b" = "exec 'rofi -show window'";
+        "${mod}+space" = "exec \"rofi -show drun\"";
+        "${mod}+g" = "exec \"rofi -show recursivebrowser\"";
+        "${mod}+b" = "exec \"rofi -show window\"";
         "${mod}+t" = "exec teams-for-linux";
         "${mod}+m" = "exec thunderbird";
 
@@ -93,40 +93,41 @@ in
         "${mod}+a" = "focus parent";
 
         # Switch to workspace n
-        "${mod}+1" = "workspace number '1'";
-        "${mod}+2" = "workspace number '2'";
-        "${mod}+3" = "workspace number '3'";
-        "${mod}+4" = "workspace number '4'";
-        "${mod}+5" = "workspace number '5'";
-        "${mod}+6" = "workspace number '6'";
-        "${mod}+7" = "workspace number '7'";
-        "${mod}+8" = "workspace number '8'";
-        "${mod}+9" = "workspace number '9'";
-        "${mod}+0" = "workspace number '0'";
+        "${mod}+1" = "workspace number \"1\"";
+        "${mod}+2" = "workspace number \"2\"";
+        "${mod}+3" = "workspace number \"3\"";
+        "${mod}+4" = "workspace number \"4\"";
+        "${mod}+5" = "workspace number \"5\"";
+        "${mod}+6" = "workspace number \"6\"";
+        "${mod}+7" = "workspace number \"7\"";
+        "${mod}+8" = "workspace number \"8\"";
+        "${mod}+9" = "workspace number \"9\"";
+        "${mod}+0" = "workspace number \"0\"";
 
         # Toggle between workspaces
         "${mod}+Tab" = "workspace next_on_output";
 
         # Move focused container to workspace n
-        "${mod}+Shift+1" = "workspace number '1'";
-        "${mod}+Shift+2" = "workspace number '2'";
-        "${mod}+Shift+3" = "workspace number '3'";
-        "${mod}+Shift+4" = "workspace number '4'";
-        "${mod}+Shift+5" = "workspace number '5'";
-        "${mod}+Shift+6" = "workspace number '6'";
-        "${mod}+Shift+7" = "workspace number '7'";
-        "${mod}+Shift+8" = "workspace number '8'";
-        "${mod}+Shift+9" = "workspace number '9'";
+        "${mod}+Shift+1" = "workspace number \"1\"";
+        "${mod}+Shift+2" = "workspace number \"2\"";
+        "${mod}+Shift+3" = "workspace number \"3\"";
+        "${mod}+Shift+4" = "workspace number \"4\"";
+        "${mod}+Shift+5" = "workspace number \"5\"";
+        "${mod}+Shift+6" = "workspace number \"6\"";
+        "${mod}+Shift+7" = "workspace number \"7\"";
+        "${mod}+Shift+8" = "workspace number \"8\"";
+        "${mod}+Shift+9" = "workspace number \"9\"";
         "${mod}+Shift+r" = "restart";
 
         # Lock screen
-        "${mod}+Control+Shift+l" = "exec 'systemctl suspend'";
+        "${mod}+Ctrl+Shift+l" = "exec \"systemctl suspend\"";
 
         # Resize
         "${mod}+r" = "resize";
 
         # Screenshot active window
-        "${mod}+p" = "exec 'maim -i $(xdotool getactivewindow) | xclip -selection clipboard -t image/png'";
+        "${mod}+p" =
+          "exec \"maim -i $(xdotool getactivewindow) | xclip -selection clipboard -t image/png\"";
       };
 
       modes = {
