@@ -60,6 +60,9 @@ in
     hexyl
     autorandr
     autorandr-launcher
+    maim
+    xclip
+    xdotool
 
     # nix utils
     nh
