@@ -7,8 +7,11 @@
 
 let
   autorandr-launcher = pkgs.callPackage ./autorandr-launcher.nix { };
+  i3Imports = [ ./i3.nix ];
 in
 {
+  imports = i3Imports;
+
   nixGL.packages = import <nixgl> { inherit pkgs; };
   nixGL.defaultWrapper = "mesa";
   nixGL.installScripts = [ "mesa" ];
