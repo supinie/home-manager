@@ -18,6 +18,8 @@ in
         size = 8.0;
       };
 
+      focus.followMouse = false;
+
       startup = [
         {
           command = "dex --autostart --environment i3";
@@ -41,6 +43,10 @@ in
         }
         {
           command = "feh --bg-fill /usr/share/backgrounds/DSC2943_by_kcpru.jpg";
+          notification = false;
+        }
+        {
+          command = "setxkbmap -option \"ctrl:nocaps\"";
           notification = false;
         }
       ];
@@ -69,7 +75,7 @@ in
         "${mod}+Shift+l" = "move right";
 
         # Move workspace between monitors
-        "${mod}+Ctrl+h" = "move workspace to output left";
+        "${mod}+Ctrl+h" = "move workspace to output left; focus left";
         "${mod}+Ctrl+j" = "move workspace to output down";
         "${mod}+Ctrl+k" = "move workspace to output up";
         "${mod}+Ctrl+l" = "move workspace to output right";
@@ -121,6 +127,7 @@ in
 
         # Lock screen
         "${mod}+Ctrl+Shift+l" = "exec \"systemctl suspend\"";
+        "${mod}+Ctrl+Shift+s" = "exec \"systemctl poweroff\"";
 
         # Resize
         "${mod}+r" = "resize";
