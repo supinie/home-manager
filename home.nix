@@ -66,6 +66,7 @@ in
     maim
     xclip
     xdotool
+    picom
 
     # nix utils
     nh
@@ -184,6 +185,8 @@ in
 
     home-manager.enable = true;
   };
+
+  services.picom = import ./picom.nix;
 
   dconf = {
     enable = true;

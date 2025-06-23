@@ -49,6 +49,10 @@ in
           command = "setxkbmap -option \"ctrl:nocaps\"";
           notification = false;
         }
+        {
+          command = "picom -b";
+          notification = false;
+        }
       ];
 
       keybindings = lib.mkOptionDefault {
