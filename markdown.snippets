@@ -19,7 +19,7 @@ snippet '([A-Za-z])_(\d\d)' "auto subscript2" wrA
 `!p snip.rv = match.group(1)`_{`!p snip.rv = match.group(2)`}
 endsnippet
 
-snippet td "superscript" iA
+snippet \td "superscript" iA
 ^{$1}$0
 endsnippet
 
@@ -27,23 +27,23 @@ snippet // "Fraction" iA
 \\frac{$1}{$2}$0
 endsnippet
 
-snippet bf "boldfont" iA
+snippet \bf "boldfont" iA
 \mathbf{$1}$0
 endsnippet
 
-snippet cal "mathcal" iA
+snippet \cal "mathcal" iA
 \mathcal{$1}$0
 endsnippet
 
-snippet te "text" iA
+snippet \te "text" iA
 \text{$1}$0
 endsnippet
 
-snippet it "italic" iA
+snippet \it "italic" iA
 \mathit{$1}$0
 endsnippet
 
-snippet bb "blackboard" iA
+snippet \bb "blackboard" iA
 \mathbb{$1}$0
 endsnippet
 
@@ -67,7 +67,7 @@ snippet iff "iff" iA
 \iff $0
 endsnippet
 
-snippet sum "sum" w
+snippet \sum "sum" w
 \sum_{$1}^{$2} $0
 endsnippet
 
