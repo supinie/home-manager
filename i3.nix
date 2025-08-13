@@ -92,7 +92,7 @@ in
         "${mod}+Shift+f" = "fullscreen toggle";
 
         # Change container layout
-        "${mod}+s" = "layout stacking";
+        # "${mod}+s" = "layout stacking";
         "${mod}+w" = "layout tabbed";
         "${mod}+e" = "layout toggle split";
 
@@ -139,6 +139,8 @@ in
         # Screenshot active window
         "${mod}+p" =
           "exec \"maim -i $(xdotool getactivewindow) | xclip -selection clipboard -t image/png\"";
+        "${mod}+s" = " exec \"maim -s -u | xclip -selection clipboard -t image/png -i\"";
+
       };
 
       modes = {
