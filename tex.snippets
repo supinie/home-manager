@@ -9,6 +9,17 @@ snippet beg "begin{} / end{}" bA
 \end{$1}
 endsnippet
 
+snippet alg "algorithm" bA
+\begin{algorithm}[h]
+	\small
+	\caption{$1}
+	\($2\)
+	\begin{algorithmic}[1]
+		$3
+	\end{algorithmic}
+\end{algorithm}
+endsnippet
+
 snippet sec "section{}" bA
 \section{$1}
 

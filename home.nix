@@ -67,6 +67,7 @@ in
     xclip
     xdotool
     picom
+    _7zz-rar
 
     # nix utils
     nh
@@ -119,6 +120,7 @@ in
     builtins.elem (lib.getName pkg) [
       "obsidian"
       "mathematica"
+      "7zz"
     ];
 
   nix = {
