@@ -92,7 +92,7 @@ in
         "${mod}+Shift+f" = "fullscreen toggle";
 
         # Change container layout
-        # "${mod}+s" = "layout stacking";
+        "${mod}+r" = "layout stacking";
         "${mod}+w" = "layout tabbed";
         "${mod}+e" = "layout toggle split";
 
@@ -134,7 +134,7 @@ in
         "${mod}+Ctrl+Shift+s" = "exec \"systemctl poweroff\"";
 
         # Resize
-        "${mod}+r" = "resize";
+        # "${mod}+r" = "resize";
 
         # Screenshot active window
         "${mod}+p" =

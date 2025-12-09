@@ -12,9 +12,11 @@ in
 {
   imports = i3Imports;
 
-  nixGL.packages = import <nixgl> { inherit pkgs; };
-  nixGL.defaultWrapper = "mesa";
-  nixGL.installScripts = [ "mesa" ];
+  targets.genericLinux.nixGL = {
+    packages = import <nixgl> { inherit pkgs; };
+    defaultWrapper = "mesa";
+    installScripts = [ "mesa" ];
+  };
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "jcl24";
@@ -175,6 +177,7 @@ in
     direnv = import ./direnv.nix;
     ghostty = import ./ghostty.nix;
     git = import ./git.nix;
+    diff-so-fancy = import ./diff-so-fancy.nix;
     kitty = import ./kitty.nix {
       inherit config;
       inherit pkgs;
