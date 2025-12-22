@@ -85,8 +85,8 @@ in
         "${mod}+Ctrl+l" = "move workspace to output right";
 
         # Split in horizontal/vertical resp.
-        "${mod}+Shift+-" = "split h";
-        "${mod}+Shift+\\" = "split v";
+        # "${mod}+Shift+-" = "split h";
+        # "${mod}+Shift+\\" = "split v";
 
         # Enter fullscreen for focused container
         "${mod}+Shift+f" = "fullscreen toggle";
@@ -134,7 +134,7 @@ in
         "${mod}+Ctrl+Shift+s" = "exec \"systemctl poweroff\"";
 
         # Resize
-        # "${mod}+r" = "resize";
+        "${mod}+Shift+q" = "resize";
 
         # Screenshot active window
         "${mod}+p" =

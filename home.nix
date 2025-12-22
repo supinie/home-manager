@@ -70,6 +70,7 @@ in
     xdotool
     picom
     _7zz-rar
+    webcamoid
 
     # nix utils
     nh
@@ -102,6 +103,7 @@ in
     librewolf
     signal-desktop
     feh
+    discord
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -123,6 +125,7 @@ in
       "obsidian"
       "mathematica"
       "7zz"
+      "discord"
     ];
 
   nix = {
