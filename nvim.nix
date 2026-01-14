@@ -138,6 +138,7 @@ in
         let g:coc_snippet_next = '<tab>'
       '';
     }
+    coc-texlab
     Ionide-vim
     vim-sage
     plenary-nvim
@@ -178,10 +179,12 @@ in
               \ 'Package siunitx Warning: Detected the "physics" package:',
               \ 'Package hyperref Warning: Token not allowed in a PDF string',
               \ 'Missing ',
+              \ 'Package biblatex Warning: Using fall-back bibtex backend:'
               \]
         let g:vimtex_view_method = 'zathura'
         let g:tex_conceal='abdmg'
         let g:vimtex_callback_progpath = '/home/jcl24/.nix-profile/bin/nvim'
+        let g:vimtex_complete_bib = {'simple' : 1}
 
         " Function to toggle vimtex_quickfix_mode
         function! ToggleVimtexQuickfixMode()

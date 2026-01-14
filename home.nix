@@ -41,6 +41,7 @@ in
     zsh
     oh-my-zsh
     tmux
+    texlab
 
     # cmd utils
     wget
