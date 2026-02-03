@@ -184,7 +184,7 @@ in
         let g:vimtex_view_method = 'zathura'
         let g:tex_conceal='abdmg'
         let g:vimtex_callback_progpath = '/home/jcl24/.nix-profile/bin/nvim'
-        let g:vimtex_complete_bib = {'simple' : 1}
+        let g:vimtex_compiler_latexmk_engines = {'_': '-lualatex'}
 
         " Function to toggle vimtex_quickfix_mode
         function! ToggleVimtexQuickfixMode()
@@ -270,7 +270,7 @@ in
         set conceallevel=0
     endif
     autocmd BufEnter *.tex set conceallevel=1
-    autocmd BufEnter *.tex set concealcursor=nc
+    autocmd BufEnter *.tex set concealcursor=c
 
     let g:fsharp#fsi_command = "/nix/store/2ashk2ig3vb8s54mpyc2w5dgr4saqcvj-dotnet-sdk-6.0.427/bin/dotnet fsi"
     set shell=/home/jcl24/.nix-profile/bin/zsh
