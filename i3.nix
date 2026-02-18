@@ -157,6 +157,28 @@ in
       bars = [
         {
           statusCommand = "i3status";
+          colors = {
+            background = "#282828";
+            separator = "#1b1b1b";
+
+            focusedWorkspace = {
+              border = "#98971a";
+              background = "#98971a";
+              text = "#282828";
+            };
+
+            inactiveWorkspace = {
+              border = "#282828";
+              background = "#282828";
+              text = "#d4be98";
+            };
+
+            urgentWorkspace = {
+              border = "#e78a4e";
+              background = "#e78a4e";
+              text = "#282828";
+            };
+          };
         }
       ];
 
@@ -174,6 +196,19 @@ in
       # move tiling windows via drag & drop by left-clicking into the title bar,
       # or left-clicking anywhere into the window while holding the floating modifier.
       tiling_drag modifier titlebar
+
+      # Color shemes for windows
+      set $bgcolor    #98971a
+      set $in-bgcolor #282828
+      set $text       #d4be98
+      set $u-bgcolor  #e78a4e
+      set $indicator  #d8a567
+      set $in-text    #7c6f64
+      #                       border          background      text            indicator (a line which shows where the next window will be placed)
+      client.focused          $bgcolor        $bgcolor        $in-bgcolor     $bgcolor
+      client.unfocused        $in-bgcolor     $in-bgcolor     $in-text        $in-bgcolor
+      client.focused_inactive $in-bgcolor     $in-bgcolor     $in-text        $in-bgcolor
+      client.urgent           $u-bgcolor      $u-bgcolor      $text           $u-bgcolor
     '';
   };
 }

@@ -72,6 +72,7 @@ in
     picom
     _7zz-rar
     webcamoid
+    brightnessctl
 
     # nix utils
     nh
