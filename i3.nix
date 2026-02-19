@@ -162,8 +162,8 @@ in
             separator = "#1b1b1b";
 
             focusedWorkspace = {
-              border = "#98971a";
-              background = "#98971a";
+              border = "#a9b665";
+              background = "#a9b665";
               text = "#282828";
             };
 
@@ -198,12 +198,12 @@ in
       tiling_drag modifier titlebar
 
       # Color shemes for windows
-      set $bgcolor    #98971a
-      set $in-bgcolor #282828
-      set $text       #d4be98
-      set $u-bgcolor  #e78a4e
-      set $indicator  #d8a567
-      set $in-text    #7c6f64
+      set $bgcolor    #a9b66599
+      set $in-bgcolor #28282899
+      set $text       #d4be9899
+      set $u-bgcolor  #e78a4e99
+      set $indicator  #d8a56799
+      set $in-text    #7c6f6499
       #                       border          background      text            indicator (a line which shows where the next window will be placed)
       client.focused          $bgcolor        $bgcolor        $in-bgcolor     $bgcolor
       client.unfocused        $in-bgcolor     $in-bgcolor     $in-text        $in-bgcolor

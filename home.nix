@@ -196,7 +196,10 @@ in
     home-manager.enable = true;
   };
 
-  services.picom = import ./picom.nix;
+  services = {
+    picom = import ./picom.nix;
+    dunst = import ./dunst.nix;
+  };
 
   dconf = {
     enable = true;
