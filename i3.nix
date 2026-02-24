@@ -42,7 +42,7 @@ in
           notification = false;
         }
         {
-          command = "feh --bg-fill /usr/share/backgrounds/DSC2943_by_kcpru.jpg";
+          command = "feh --bg-fill /home/jcl24/Pictures/film/japan/79110014.JPG";
           notification = false;
         }
         {
