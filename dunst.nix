@@ -5,6 +5,7 @@
       transparency = 10;
       frame_color = "#43402f";
       font = "Hack Nerd Font Mono";
+      follow = "keyboard";
     };
 
     urgency_normal = {
