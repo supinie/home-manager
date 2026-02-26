@@ -34,11 +34,11 @@ in
           notification = false;
         }
         {
-          command = "autorandr --change";
+          command = "autorandr-loader";
           notification = false;
         }
         {
-          command = "autorandr-loader";
+          command = "autorandr --change";
           notification = false;
         }
         {
