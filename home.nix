@@ -8,6 +8,10 @@
 let
   autorandr-launcher = pkgs.callPackage ./autorandr-launcher.nix { };
   i3Imports = [ ./i3.nix ];
+  sp = pkgs.fetchurl {
+    url = "https://gist.githubusercontent.com/supinie/c58a8c302053534e24a4dc3f0570d41d/raw/ebf1a351da5948ec519606f959bda16efd4135bf/sp";
+    sha256 = "sha256-QVqjy8Evmq9Ji+FjMrT+C1LD5wN7y0/Xh7uYmiNHoCg=";
+  };
 in
 {
   imports = i3Imports;
@@ -120,6 +124,7 @@ in
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    (pkgs.writeShellScriptBin "sp" (builtins.readFile sp))
   ];
 
   nixpkgs.config.allowUnfreePredicate =

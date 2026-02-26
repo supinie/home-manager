@@ -141,6 +141,10 @@ in
           "exec \"maim -i $(xdotool getactivewindow) | xclip -selection clipboard -t image/png\"";
         "${mod}+s" = " exec \"maim -s -u | xclip -selection clipboard -t image/png -i\"";
 
+        # Control Spotify
+        "${mod}+less" = "exec \"sp prev\"";
+        "${mod}+greater" = "exec \"sp play\"";
+        "${mod}+slash" = "exec \"sp next\"";
       };
 
       modes = {
