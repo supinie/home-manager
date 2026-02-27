@@ -219,6 +219,9 @@ in
       client.unfocused        $in-bgcolor     $in-bgcolor     $in-text        $in-bgcolor
       client.focused_inactive $in-bgcolor     $in-bgcolor     $in-text        $in-bgcolor
       client.urgent           $u-bgcolor      $u-bgcolor      $text           $u-bgcolor
+
+      gaps inner 8px
+      gaps outer 8px
     '';
   };
 }
