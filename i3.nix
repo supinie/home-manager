@@ -145,6 +145,12 @@ in
         "${mod}+less" = "exec \"sp prev\"";
         "${mod}+greater" = "exec \"sp play\"";
         "${mod}+slash" = "exec \"sp next\"";
+
+        # Make the currently focused window a scratchpad
+        "${mod}+Shift+minus" = "move scratchpad";
+
+        # Show the first scratchpad window
+        "${mod}+minus" = "scratchpad show";
       };
 
       modes = {
