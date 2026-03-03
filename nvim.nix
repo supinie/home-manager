@@ -30,6 +30,20 @@ let
       hash = "sha256-zha3BNZXJSgEWEyh8fcy1+x3Y+c1DV1eTMa/AQ+sj7M=";
     };
   };
+
+  telescope-bibtex = pkgs.vimUtils.buildVimPlugin {
+    name = "telescope-bibtex";
+    src = pkgs.fetchFromGitHub {
+      owner = "nvim-telescope";
+      repo = "telescope-bibtex.nvim";
+      rev = "289a6f86ebec06e8ae1590533b732b9981d84900";
+      hash = "sha256-xaGTJ69mknIn1esXw2maU03GnX85ficqXLD+ykkyi90=";
+    };
+    dependencies = with pkgs.vimPlugins; [
+      telescope-nvim
+      plenary-nvim
+    ];
+  };
 in
 {
   enable = true;
@@ -209,6 +223,10 @@ in
         nnoremap <C-i> <cmd>lua require('telescope.builtin').find_files()<cr>
       '';
     }
+    {
+      plugin = telescope-bibtex;
+      config = "nnoremap <C-c> <cmd> lua require('telescope').extensions.bibtex.bibtex()<cr>";
+    }
     vim-multiple-cursors
     {
       plugin = gruvbox-material;
@@ -330,5 +348,6 @@ in
             }
         }
     }
+    require"telescope".load_extension("bibtex")
   '';
 }
