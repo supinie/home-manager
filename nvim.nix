@@ -31,19 +31,6 @@ let
     };
   };
 
-  telescope-bibtex = pkgs.vimUtils.buildVimPlugin {
-    name = "telescope-bibtex";
-    src = pkgs.fetchFromGitHub {
-      owner = "nvim-telescope";
-      repo = "telescope-bibtex.nvim";
-      rev = "289a6f86ebec06e8ae1590533b732b9981d84900";
-      hash = "sha256-xaGTJ69mknIn1esXw2maU03GnX85ficqXLD+ykkyi90=";
-    };
-    dependencies = with pkgs.vimPlugins; [
-      telescope-nvim
-      plenary-nvim
-    ];
-  };
 in
 {
   enable = true;
@@ -214,6 +201,7 @@ in
         nnoremap <S-q> :call ToggleVimtexQuickfixMode()<CR>
       '';
     }
+    telescope-fzf-native-nvim
     {
       plugin = telescope-nvim;
       config = ''
@@ -222,11 +210,12 @@ in
         nnoremap <C-b> <cmd>lua require('telescope.builtin').buffers()<cr>
         nnoremap <C-i> <cmd>lua require('telescope.builtin').find_files()<cr>
       '';
+      # nnoremap <C-c> <cmd>lua bib_picker.telescope_cite_picker()<cr>
     }
-    {
-      plugin = telescope-bibtex;
-      config = "nnoremap <C-c> <cmd> lua require('telescope').extensions.bibtex.bibtex()<cr>";
-    }
+    # {
+    #   plugin = telescope-bibtex;
+    #   config = "nnoremap <C-c> <cmd> lua require('telescope').extensions.bibtex.bibtex()<cr>";
+    # }
     vim-multiple-cursors
     {
       plugin = gruvbox-material;
@@ -297,63 +286,100 @@ in
     noremap T <C-^>
   '';
   extraLuaConfig = ''
-        local config = {
-            options = {
-                icons_enabled = true,
-                theme = 'gruvbox-material',
-                component_separators = "",
-                section_separators = "",
-                disabled_filetypes = {
-                    statusline = {},
-                    winbar = {},
-                },
-                ignore_focus = {},
-                always_divide_middle = true,
-                globalstatus = false,
-                refresh = {
-                    statusline = 1000,
-                    tabline = 1000,
-                    winbar = 1000,
-                }
+    local config = {
+        options = {
+            icons_enabled = true,
+            theme = 'gruvbox-material',
+            component_separators = "",
+            section_separators = "",
+            disabled_filetypes = {
+                statusline = {},
+                winbar = {},
             },
-            sections = {
-                lualine_a = {'mode'},
-                lualine_b = {'branch', 'diff', 'diagnostics'},
-                lualine_c = {'buffers'},
-                lualine_x = {'searchcount'},
-                lualine_y = {'progress'},
-                lualine_z = {'location'}
-            },
-            inactive_sections = {
-                lualine_a = {},
-                lualine_b = {},
-                lualine_c = {'filename'},
-                lualine_x = {'location'},
-                lualine_y = {},
-                lualine_z = {}
-            },
-            tabline = {},
-            winbar = {},
-            inactive_winbar = {},
-            extensions = {}
-        }
-        require('lualine').setup(config)
+            ignore_focus = {},
+            always_divide_middle = true,
+            globalstatus = false,
+            refresh = {
+                statusline = 1000,
+                tabline = 1000,
+                winbar = 1000,
+            }
+        },
+        sections = {
+            lualine_a = {'mode'},
+            lualine_b = {'branch', 'diff', 'diagnostics'},
+            lualine_c = {'buffers'},
+            lualine_x = {'searchcount'},
+            lualine_y = {'progress'},
+            lualine_z = {'location'}
+        },
+        inactive_sections = {
+            lualine_a = {},
+            lualine_b = {},
+            lualine_c = {'filename'},
+            lualine_x = {'location'},
+            lualine_y = {},
+            lualine_z = {}
+        },
+        tabline = {},
+        winbar = {},
+        inactive_winbar = {},
+        extensions = {}
+    }
+    require('lualine').setup(config)
 
-        require('telescope').setup{
-            defaults = {
-                mappings = {
-                    i = {
-    		    ["<CR>"] = "select_default",
-                    }
+    _G.bib_picker = assert(dofile("${builtins.toString ./bibtex-fuzzy-find.lua}"))
+
+    require('telescope').setup{
+        defaults = {
+            mappings = {
+                i = {
+                ["<CR>"] = "select_default",
                 }
             },
-            extensions = {
-                bibtex = {
-                    depth = 1,
-                    context = false,
-                }
+            layout_strategy = 'flex',
+            layout_config = {
+                horizontal = {
+                    prompt_position = 'bottom',
+                    preview_width = 0.5,
+                },
+                vertical = {
+                    prompt_position = 'bottom',
+                    mirror = false,
+                    preview_height = 0.3,
+                },
+                flex = {
+                    flip_columns = 120,
+                },
+                width = 0.95,
+                height = 0.95,
+                preview_cutoff = 0,
+            },
+        },
+        extensions = {
+            fzf = {
+                fuzzy = true,
+                override_generic_sorter = true,
+                override_file_sorter = true,
+                case_mode = "smart_case",
             }
         }
-        require"telescope".load_extension("bibtex")
+    }
+
+    vim.api.nvim_set_keymap(
+      "n",
+      "<C-c>",
+      "<cmd>lua bib_picker.telescope_cite_picker()<CR>",
+      { noremap = true, silent = true }
+    )
+
+    vim.api.nvim_create_autocmd({ "BufReadPost", "BufEnter" }, {
+      pattern = { "*.tex" },
+      callback = function(args)
+        -- Preload cache for this TeX file; runs once per file open (fast no-op if unchanged)
+        bib_picker.preload_for_tex(args.file)
+      end,
+    })
   '';
+  # require"telescope".load_extension("bibtex")
 }

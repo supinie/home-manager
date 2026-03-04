@@ -77,6 +77,7 @@ in
     _7zz-rar
     webcamoid
     brightnessctl
+    tmsu
 
     # nix utils
     nh
