@@ -12,7 +12,9 @@ let
     url = "https://gist.githubusercontent.com/supinie/c58a8c302053534e24a4dc3f0570d41d/raw/ebf1a351da5948ec519606f959bda16efd4135bf/sp";
     sha256 = "sha256-QVqjy8Evmq9Ji+FjMrT+C1LD5wN7y0/Xh7uYmiNHoCg=";
   };
+
 in
+
 {
   imports = i3Imports;
 
@@ -77,7 +79,6 @@ in
     _7zz-rar
     webcamoid
     brightnessctl
-    tmsu
 
     # nix utils
     nh
