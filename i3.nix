@@ -42,7 +42,7 @@ in
           notification = false;
         }
         {
-          command = "feh --bg-fill /home/jcl24/Pictures/film/japan/79110014.JPG";
+          command = "feh --bg-fill --randomize ~/.config/home-manager/wallpapers/*";
           notification = false;
         }
         {

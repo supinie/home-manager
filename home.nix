@@ -79,6 +79,7 @@ in
     _7zz-rar
     webcamoid
     brightnessctl
+    pomodoro
 
     # nix utils
     nh
