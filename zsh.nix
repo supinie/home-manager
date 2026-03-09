@@ -1,6 +1,10 @@
+{ config, ... }:
+
 {
   enable = true;
   enableCompletion = true;
+
+  dotDir = "${config.xdg.configHome}/zsh";
 
   shellAliases = {
     # update = "sudo nixos-rebuild switch";

@@ -122,7 +122,6 @@ in
     coc-rust-analyzer
     # coc-nix
     coc-json
-    coc-go
     coc-sh
     coc-pyright
     coc-vimtex
@@ -285,7 +284,7 @@ in
     " set T to go to last buffer
     noremap T <C-^>
   '';
-  extraLuaConfig = ''
+  initLua = ''
     local config = {
         options = {
             icons_enabled = true,

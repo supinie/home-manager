@@ -1,10 +1,11 @@
 {
-  lib,
   stdenv,
   fetchFromGitHub,
   pkg-config,
   pkgs,
-  xorg,
+  libx11,
+  libxcb,
+  libxrandr,
 }:
 
 stdenv.mkDerivation rec {
@@ -20,9 +21,9 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [
-    xorg.libX11
-    xorg.libxcb
-    xorg.libXrandr
+    libx11
+    libxcb
+    libxrandr
   ];
 
   sourceRoot = "${src.name}/contrib/autorandr_launcher";

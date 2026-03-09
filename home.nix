@@ -54,7 +54,6 @@ in
     curl
     gnupg
     git
-    neofetch
     htop
     bottom
     bat
@@ -87,7 +86,6 @@ in
     direnv
     nixpkgs-review
     gnomeExtensions.window-calls
-    nixfmt-rfc-style
 
     # # rust
     # rustup
@@ -138,6 +136,7 @@ in
       "7zz"
       "discord"
       "spotify"
+      "uasm"
     ];
 
   nix = {
@@ -201,7 +200,7 @@ in
     rofi = import ./rofi.nix;
     tmux = import ./tmux.nix { inherit pkgs; };
     zathura = import ./zathura.nix;
-    zsh = import ./zsh.nix;
+    zsh = import ./zsh.nix { inherit config; };
 
     home-manager.enable = true;
   };
