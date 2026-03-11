@@ -145,6 +145,7 @@ in
       "nix-command"
       "flakes"
     ];
+    gc.automatic = true;
   };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
