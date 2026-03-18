@@ -20,6 +20,8 @@ in
 
       focus.followMouse = false;
 
+      floating.criteria = [ { title = "Bluetooth Devices"; } ];
+
       startup = [
         {
           command = "dex --autostart --environment i3";
