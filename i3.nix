@@ -65,6 +65,7 @@ in
         "${mod}+b" = "exec \"rofi -show window\"";
         "${mod}+t" = "exec teams-for-linux";
         "${mod}+m" = "exec thunderbird";
+        "${mod}+z" = "exec zotero";
 
         "${mod}+c" = "kill";
 

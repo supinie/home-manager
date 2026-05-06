@@ -74,7 +74,7 @@ in
     maim
     xclip
     xdotool
-    picom
+    # picom
     _7zz-rar
     webcamoid
     brightnessctl
@@ -113,6 +113,8 @@ in
     discord
     spotify
     zotero
+    netbird
+    netbird-ui
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -208,7 +210,7 @@ in
   };
 
   services = {
-    picom = import ./picom.nix;
+    # picom = import ./picom.nix;
     dunst = import ./dunst.nix;
   };
 

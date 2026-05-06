@@ -285,6 +285,8 @@ in
     noremap T <C-^>
   '';
   initLua = ''
+    local spell spelllang=en_gb
+
     local config = {
         options = {
             icons_enabled = true,
