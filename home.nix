@@ -79,6 +79,7 @@ in
     webcamoid
     brightnessctl
     pomodoro
+    claude-code
 
     # nix utils
     nh
@@ -140,6 +141,7 @@ in
       "discord"
       "spotify"
       "uasm"
+      "claude-code"
     ];
 
   nix = {
