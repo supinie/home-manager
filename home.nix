@@ -12,6 +12,7 @@ let
     url = "https://gist.githubusercontent.com/supinie/c58a8c302053534e24a4dc3f0570d41d/raw/ebf1a351da5948ec519606f959bda16efd4135bf/sp";
     sha256 = "sha256-QVqjy8Evmq9Ji+FjMrT+C1LD5wN7y0/Xh7uYmiNHoCg=";
   };
+  savepoint = (builtins.getFlake "github:NamtaoProductions/savepoint").packages.${pkgs.system}.default;
 
 in
 
@@ -116,6 +117,7 @@ in
     zotero
     netbird
     netbird-ui
+    chromium
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -130,6 +132,7 @@ in
     #   echo "Hello, ${config.home.username}!"
     # '')
     (pkgs.writeShellScriptBin "sp" (builtins.readFile sp))
+    savepoint
   ];
 
   nixpkgs.config.allowUnfreePredicate =

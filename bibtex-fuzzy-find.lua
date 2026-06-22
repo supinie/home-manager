@@ -36,8 +36,22 @@ local function get_bib_files_for(tex_file)
   local tex_dir = vim.fn.fnamemodify(tex_file, ":h")
 
   for line in io.lines(tex_file) do
+    -- BibLaTeX: \addbibresource{file.bib}
     local path = line:match("\\addbibresource%s*{%s*(.-)%s*}")
-    if path then
+    -- BibTeX: \bibliography{file1,file2,...} (comma-separated, .bib extension optional)
+    if not path then
+      local bib_arg = line:match("\\bibliography%s*{%s*(.-)%s*}")
+      if bib_arg then
+        for name in bib_arg:gmatch("[^,%s]+") do
+          local p = name:gsub('^["{ ]*', ""):gsub('["} ]*$', "")
+          if not p:match("%.bib$") then p = p .. ".bib" end
+          local abs = vim.fn.fnamemodify(tex_dir .. "/" .. p, ":p")
+          if vim.fn.filereadable(abs) == 1 then
+            table.insert(bib_files, abs)
+          end
+        end
+      end
+    else
       path = path:gsub('^["{ ]*', ""):gsub('["} ]*$', "")
       local abs_path = vim.fn.fnamemodify(tex_dir.. "/".. path, ":p")
       if vim.fn.filereadable(abs_path) == 1 then
@@ -202,7 +216,7 @@ function M.telescope_cite_picker()
 
   local bib_files = get_bib_files_for(tex_file)
   if #bib_files == 0 then
-    vim.notify("No \\addbibresource files found", vim.log.levels.INFO)
+    vim.notify("No bib files found (expected \\addbibresource or \\bibliography)", vim.log.levels.INFO)
     return
   end
 
@@ -238,10 +252,21 @@ function M.telescope_cite_picker()
     }),
     attach_mappings = function(_, _)
       actions.select_default:replace(function(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        local multi = picker:get_multi_selection()
         actions.close(prompt_bufnr)
-        local cite = string.format("\\cite{%s}", selection.value.key)
-        vim.api.nvim_put({ cite }, "c", true, true)
+        if #multi > 0 then
+          local keys = {}
+          for _, entry in ipairs(multi) do
+            table.insert(keys, entry.value.key)
+          end
+          local cite = string.format("\\cite{%s}", table.concat(keys, ","))
+          vim.api.nvim_put({ cite }, "c", true, true)
+        else
+          local selection = action_state.get_selected_entry()
+          local cite = string.format("\\cite{%s}", selection.value.key)
+          vim.api.nvim_put({ cite }, "c", true, true)
+        end
       end)
       return true
     end,

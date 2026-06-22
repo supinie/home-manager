@@ -285,7 +285,8 @@ in
     noremap T <C-^>
   '';
   initLua = ''
-    local spell spelllang=en_gb
+    vim.opt.spell = true
+    vim.opt.spelllang = vim.env.NVIM_SPELLLANG or "en_gb"
 
     local config = {
         options = {

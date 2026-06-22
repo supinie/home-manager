@@ -12,6 +12,7 @@
     push.autoSetupRemote = true;
     init.defaultBranch = "main";
     pull.rebase = true;
+    credential.helper = "store";
   };
   ignores = [
     "*.swp"
