@@ -12,7 +12,7 @@ let
     url = "https://gist.githubusercontent.com/supinie/c58a8c302053534e24a4dc3f0570d41d/raw/ebf1a351da5948ec519606f959bda16efd4135bf/sp";
     sha256 = "sha256-QVqjy8Evmq9Ji+FjMrT+C1LD5wN7y0/Xh7uYmiNHoCg=";
   };
-  savepoint = (builtins.getFlake "github:NamtaoProductions/savepoint").packages.${pkgs.system}.default;
+  savepoint = (builtins.getFlake "github:NamtaoProductions/savepoint").packages.${pkgs.stdenv.hostPlatform.system}.default;
 
 in
 
@@ -82,6 +82,10 @@ in
     pomodoro
     claude-code
 
+    # audio: clickable tray applet to pick the output device + full mixer
+    pasystray
+    pavucontrol
+
     # nix utils
     nh
     any-nix-shell
@@ -99,7 +103,7 @@ in
     pyright
 
     # apps
-    firefox
+    (config.lib.nixGL.wrap firefox)
     obsidian
     teams-for-linux
     zathura
@@ -115,8 +119,6 @@ in
     discord
     spotify
     zotero
-    netbird
-    netbird-ui
     chromium
 
     # # It is sometimes useful to fine-tune packages, for example, by applying

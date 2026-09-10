@@ -1,10 +1,53 @@
 {
   lib,
+  pkgs,
   ...
 }:
 
 let
   mod = "Mod4";
+
+  # Wraps i3status to prepend a brightness block to the status line.
+  # Refreshed by $refresh_i3status like the rest of the bar.
+  # Enables the i3bar click-events protocol; clicks on the brightness block
+  # adjust the backlight: left/scroll-up +5%, right/scroll-down -5%,
+  # middle sets 50%.
+  i3status-brightness = pkgs.writeShellScript "i3status-brightness" ''
+    inject() {
+      pct=$(brightnessctl -m | cut -d, -f4)
+      printf '%s' "[{\"name\":\"brightness\",\"full_text\":\"☀ $pct\"},''${1#[}"
+    }
+
+    # Read click events sent by i3bar on stdin and act on those targeting
+    # the brightness block.
+    # stdin must be passed explicitly: background jobs otherwise have their
+    # stdin reassigned to /dev/null.
+    exec 3<&0
+    {
+      while read -r ev <&3; do
+        case $ev in
+          *'"name"'*'"brightness"'*)
+            btn=$(printf '%s' "$ev" | sed -n 's/.*"button"[^0-9]*\([0-9]*\).*/\1/p')
+            case $btn in
+              1|4) brightnessctl -q set 5%+ ;;
+              3|5) brightnessctl -n -q set 5%- ;;
+              2) brightnessctl -q set 50% ;;
+            esac
+            killall -SIGUSR1 i3status
+            ;;
+        esac
+      done
+    } &
+
+    i3status < /dev/null | {
+      read -r header && printf '%s\n' '{"version":1,"click_events":true}'
+      read -r open && printf '%s\n' "$open"
+      read -r first && printf '%s\n' "$(inject "$first")"
+      while read -r line; do
+        printf ',%s\n' "$(inject "''${line#,}")"
+      done
+    }
+  '';
 in
 {
   xsession.windowManager.i3 = {
@@ -32,7 +75,16 @@ in
           notification = false;
         }
         {
+          # No system sleep on idle; lock and turn the screen off after 10 min instead.
+          command = "xset s 600 600 dpms 0 0 600";
+          notification = false;
+        }
+        {
           command = "nm-applet";
+          notification = false;
+        }
+        {
+          command = "pasystray";
           notification = false;
         }
         {
@@ -66,6 +118,7 @@ in
         "${mod}+t" = "exec teams-for-linux";
         "${mod}+m" = "exec thunderbird";
         "${mod}+z" = "exec zotero";
+        "${mod}+o" = "exec obsidian";
 
         "${mod}+c" = "kill";
 
@@ -121,15 +174,15 @@ in
         "${mod}+Tab" = "workspace next_on_output";
 
         # Move focused container to workspace n
-        "${mod}+Shift+1" = "workspace number \"1\"";
-        "${mod}+Shift+2" = "workspace number \"2\"";
-        "${mod}+Shift+3" = "workspace number \"3\"";
-        "${mod}+Shift+4" = "workspace number \"4\"";
-        "${mod}+Shift+5" = "workspace number \"5\"";
-        "${mod}+Shift+6" = "workspace number \"6\"";
-        "${mod}+Shift+7" = "workspace number \"7\"";
-        "${mod}+Shift+8" = "workspace number \"8\"";
-        "${mod}+Shift+9" = "workspace number \"9\"";
+        "${mod}+Shift+1" = "move container to workspace number \"1\"";
+        "${mod}+Shift+2" = "move container to workspace number \"2\"";
+        "${mod}+Shift+3" = "move container to workspace number \"3\"";
+        "${mod}+Shift+4" = "move container to workspace number \"4\"";
+        "${mod}+Shift+5" = "move container to workspace number \"5\"";
+        "${mod}+Shift+6" = "move container to workspace number \"6\"";
+        "${mod}+Shift+7" = "move container to workspace number \"7\"";
+        "${mod}+Shift+8" = "move container to workspace number \"8\"";
+        "${mod}+Shift+9" = "move container to workspace number \"9\"";
         "${mod}+Shift+r" = "restart";
 
         # Lock screen
@@ -169,7 +222,12 @@ in
 
       bars = [
         {
-          statusCommand = "i3status";
+          statusCommand = "${i3status-brightness}";
+          extraConfig = ''
+            # Scroll on the bar to adjust screen brightness.
+            bindsym button4 exec --no-startup-id brightnessctl -q set 5%+ && killall -SIGUSR1 i3status
+            bindsym button5 exec --no-startup-id brightnessctl -n -q set 5%- && killall -SIGUSR1 i3status
+          '';
           colors = {
             background = "#282828";
             separator = "#1b1b1b";
@@ -206,6 +264,10 @@ in
       bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
       bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+      # Use brightnessctl to adjust screen brightness.
+      bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl -q set 5%+ && $refresh_i3status
+      bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl -n -q set 5%- && $refresh_i3status
+
       # move tiling windows via drag & drop by left-clicking into the title bar,
       # or left-clicking anywhere into the window while holding the floating modifier.
       tiling_drag modifier titlebar
@@ -227,4 +289,55 @@ in
       gaps outer 8px
     '';
   };
+
+  # Copy of the system default /etc/i3status.conf, with output_format forced
+  # to i3bar so the brightness wrapper can inject its JSON block.
+  xdg.configFile."i3status/config".text = ''
+    general {
+            colors = true
+            interval = 1
+            output_format = "i3bar"
+    }
+
+    order += "ipv6"
+    order += "wireless _first_"
+    order += "ethernet _first_"
+    order += "battery all"
+    order += "disk /"
+    order += "load"
+    order += "memory"
+    order += "tztime local"
+
+    wireless _first_ {
+            format_up = "W: (%quality at %essid) %ip"
+            format_down = "W: down"
+    }
+
+    ethernet _first_ {
+            format_up = "E: %ip (%speed)"
+            format_down = "E: down"
+    }
+
+    battery all {
+            format = "%status %percentage %remaining"
+    }
+
+    disk "/" {
+            format = "%avail"
+    }
+
+    load {
+            format = "%1min"
+    }
+
+    memory {
+            format = "%used | %available"
+            threshold_degraded = "1G"
+            format_degraded = "MEMORY < %available"
+    }
+
+    tztime local {
+            format = "%Y-%m-%d %H:%M:%S"
+    }
+  '';
 }

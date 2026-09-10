@@ -31,11 +31,28 @@ let
     };
   };
 
+  # ACP adapter that bridges avante.nvim <-> Claude Code. Built natively from
+  # nix (no npx/runtime download). Pure JS; its node shebang is patched to the
+  # nix nodejs, so it runs without node on PATH.
+  claude-code-acp = pkgs.buildNpmPackage rec {
+    pname = "claude-code-acp";
+    version = "0.16.2";
+    src = pkgs.fetchFromGitHub {
+      owner = "zed-industries";
+      repo = "claude-code-acp";
+      rev = "v${version}";
+      hash = "sha256-NiUlTFNA9q56KoDb/2qan2wt7x4ls2IPBUcY3QHj3WA=";
+    };
+    npmDepsHash = "sha256-c8/dfHKY6BTNHMfkQs8+nOUefiy6QVUZ5+h/Hf+3Gsc=";
+    dontCheckForBrokenSymlinks = true;
+  };
+
 in
 {
   enable = true;
   vimAlias = true;
   defaultEditor = true;
+  withRuby = false;
   coc = {
     enable = true;
     settings = {
@@ -112,6 +129,7 @@ in
   plugins = with pkgs.vimPlugins; [
     {
       plugin = coc-nvim;
+      type = "viml";
       config = ''
         noremap <silent> <C-t> :10split <bar> :term <CR>
         tnoremap <Esc> <C-\><C-n>
@@ -127,6 +145,7 @@ in
     coc-vimtex
     {
       plugin = coc-snippets;
+      type = "viml";
       config = ''
         inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#_select_confirm() : coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',\'\'])\<CR>" : CheckBackspace() ? "\<TAB>" : coc#refresh()
 
@@ -146,6 +165,7 @@ in
     vim-system-copy
     {
       plugin = vim-tmux-navigator;
+      type = "viml";
       config = ''
         let g:tmux_navigator_disable_when_zoomed = 1
       '';
@@ -153,13 +173,23 @@ in
     vim-obsession
     {
       plugin = vim-rainbow;
-      config = "let g:rainbow_active = 1";
+      type = "viml";
+      config = ''
+        let g:rainbow_active = 1
+        " rainbow's operator matches (op_lv0 at top level, op_lvN inside its
+        " paren/brace regions) swallow the $ delimiters, so vimtex's $...$ and
+        " $$...$$ math zones never start; unload rainbow in tex buffers
+        " (BufEnter fires after rainbow's Syntax autocmd has loaded it; the
+        " syn clear inside rainbow#clear() is buffer-local)
+        autocmd BufEnter *.tex silent! call rainbow#clear()
+      '';
     }
     lualine-nvim
     nvim-web-devicons
     vim-commentary
     {
       plugin = vim-oscyank;
+      type = "viml";
       config = ''
         let g:system_copy_enable_osc52 = 1
         let g:oscyank_term = 'tmux'
@@ -167,6 +197,7 @@ in
     }
     {
       plugin = vimtex;
+      type = "viml";
       config = ''
         " Filter out some compilation warning messages from QuickFix display
         let g:vimtex_quickfix_ignore_filters = [
@@ -203,6 +234,7 @@ in
     telescope-fzf-native-nvim
     {
       plugin = telescope-nvim;
+      type = "viml";
       config = ''
         nnoremap <C-p> <cmd>lua require('telescope.builtin').git_files()<cr>
         nnoremap <C-g> <cmd>lua require('telescope.builtin').live_grep()<cr>
@@ -218,9 +250,11 @@ in
     vim-multiple-cursors
     {
       plugin = gruvbox-material;
+      type = "viml";
       config = "colorscheme gruvbox-material";
     }
     # obsidian-nvim
+    avante-nvim
   ];
   extraPackages = with pkgs; [
     rust-analyzer
@@ -382,6 +416,42 @@ in
         bib_picker.preload_for_tex(args.file)
       end,
     })
+
+    -- avante.nvim driving Claude Code over ACP, on your subscription.
+    -- The ACP adapter is the nix-built claude-code-acp (no npx/runtime download).
+    -- avante passes the adapter only PATH + the env vars listed here, so by
+    -- omitting ANTHROPIC_API_KEY the adapter can only authenticate via your
+    -- `claude` login (subscription); HOME lets `claude` find those credentials.
+    require('avante').setup {
+      provider = "claude-code-nix",
+      acp_providers = {
+        ["claude-code-nix"] = {
+          command = "${claude-code-acp}/bin/claude-code-acp",
+          args = {},
+          env = {
+            NODE_NO_WARNINGS = "1",
+            HOME = os.getenv("HOME"),
+            ACP_PATH_TO_CLAUDE_CODE_EXECUTABLE = vim.fn.exepath("claude"),
+            -- "default" (not bypassPermissions): Claude requests permission for
+            -- edits, which avante renders as a native diff you accept/reject.
+            -- bypassPermissions makes Claude write files directly, skipping the
+            -- diff UI entirely.
+            ACP_PERMISSION_MODE = "default",
+          },
+        },
+      },
+      windows = {
+        position = "right",
+        width = 40,
+        ask = { floating = true },
+      },
+      mappings = {
+        ask = "<leader>as",                 -- selection-aware ask (normal + visual)
+        toggle = { default = "<leader>ai" }, -- open/close the avante sidebar
+      },
+    }
+    vim.keymap.set("n", "<leader>ab", "<cmd>AvanteAsk<cr>",
+      { silent = true, desc = "Avante: ask (current buffer in context)" })
   '';
   # require"telescope".load_extension("bibtex")
 }
