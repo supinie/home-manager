@@ -116,7 +116,7 @@ in
     librewolf
     signal-desktop
     feh
-    discord
+    # discord
     spotify
     zotero
     chromium

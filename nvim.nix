@@ -161,7 +161,16 @@ in
     Ionide-vim
     vim-sage
     plenary-nvim
-    indentLine
+    {
+      plugin = indentLine;
+      type = "viml";
+      config = ''
+        " indentLine draws its guides via conceal and forces
+        " conceallevel=2 concealcursor=inc in every buffer it decorates,
+        " which overrides the TeX conceal settings below; keep it out of TeX
+        let g:indentLine_fileTypeExclude = ['tex']
+      '';
+    }
     vim-system-copy
     {
       plugin = vim-tmux-navigator;
@@ -178,10 +187,9 @@ in
         let g:rainbow_active = 1
         " rainbow's operator matches (op_lv0 at top level, op_lvN inside its
         " paren/brace regions) swallow the $ delimiters, so vimtex's $...$ and
-        " $$...$$ math zones never start; unload rainbow in tex buffers
-        " (BufEnter fires after rainbow's Syntax autocmd has loaded it; the
-        " syn clear inside rainbow#clear() is buffer-local)
-        autocmd BufEnter *.tex silent! call rainbow#clear()
+        " $$...$$ math zones never start; rainbow is unloaded in tex buffers by
+        " after/plugin/rainbow-tex.vim (see xdg.nix), which runs after every
+        " Syntax/ColorScheme re-hook, unlike a one-off BufEnter clear here
       '';
     }
     lualine-nvim
@@ -213,7 +221,6 @@ in
               \ 'Package biblatex Warning: Using fall-back bibtex backend:'
               \]
         let g:vimtex_view_method = 'zathura'
-        let g:tex_conceal='abdmg'
         let g:vimtex_callback_progpath = '/home/jcl24/.nix-profile/bin/nvim'
         let g:vimtex_compiler_latexmk_engines = {'_': '-lualatex'}
 
@@ -309,8 +316,9 @@ in
     if index(filetypes, &filetype) != -1
         set conceallevel=0
     endif
-    autocmd BufEnter *.tex set conceallevel=1
-    autocmd BufEnter *.tex set concealcursor=c
+    " Conceal maths as unicode in TeX except on the cursor line (FileType, not
+    " BufEnter, so it also applies to \input'd files without a .tex suffix)
+    autocmd FileType tex setlocal conceallevel=2 concealcursor=c
 
     let g:fsharp#fsi_command = "/nix/store/2ashk2ig3vb8s54mpyc2w5dgr4saqcvj-dotnet-sdk-6.0.427/bin/dotnet fsi"
     set shell=/home/jcl24/.nix-profile/bin/zsh
