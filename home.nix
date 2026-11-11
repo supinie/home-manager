@@ -17,7 +17,7 @@ let
 in
 
 {
-  imports = i3Imports;
+  imports = i3Imports ++ [ ./nix-clean.nix ];
 
   targets.genericLinux.nixGL = {
     packages = import <nixgl> { inherit pkgs; };
@@ -117,9 +117,16 @@ in
     signal-desktop
     feh
     # discord
+    chromium
+    gimp
     spotify
     zotero
-    chromium
+    # zotero plugin deps
+    djvulibre
+    ocrmypdf
+    tesseract
+    qpdf
+    pngquant
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -137,17 +144,24 @@ in
     savepoint
   ];
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "obsidian"
-      "mathematica"
-      "7zz"
-      "discord"
-      "spotify"
-      "uasm"
-      "claude-code"
-    ];
+  nixpkgs.config = {
+      allowUnfreePredicate =
+        pkg:
+        builtins.elem (lib.getName pkg) [
+          "obsidian"
+          "mathematica"
+          "7zz"
+          "discord"
+          "spotify"
+          "uasm"
+          "claude-code"
+          "firefox-esr-140-bin-unwrapped"
+        ];
+        permittedInsecurePackages = [
+            "firefox-esr-140-bin-unwrapped-140.17.0esr"
+        ];
+  };
+
 
   nix = {
     package = pkgs.nix;
