@@ -1,5 +1,7 @@
 {
-  enable = true;
-  theme = "gruvbox-dark-soft";
-  settings.location = 0;
+  programs.rofi = {
+    enable = true;
+    theme = "gruvbox-dark-soft";
+    settings.location = 0;
+  };
 }

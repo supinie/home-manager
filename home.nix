@@ -7,161 +7,148 @@
 
 let
   autorandr-launcher = pkgs.callPackage ./autorandr-launcher.nix { };
-  i3Imports = [ ./i3.nix ];
   sp = pkgs.fetchurl {
     url = "https://gist.githubusercontent.com/supinie/c58a8c302053534e24a4dc3f0570d41d/raw/ebf1a351da5948ec519606f959bda16efd4135bf/sp";
-    sha256 = "sha256-QVqjy8Evmq9Ji+FjMrT+C1LD5wN7y0/Xh7uYmiNHoCg=";
+    hash = "sha256-QVqjy8Evmq9Ji+FjMrT+C1LD5wN7y0/Xh7uYmiNHoCg=";
   };
-  savepoint = (builtins.getFlake "github:NamtaoProductions/savepoint").packages.${pkgs.stdenv.hostPlatform.system}.default;
-
+  savepoint =
+    (builtins.getFlake "github:NamtaoProductions/savepoint")
+    .packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
-
 {
-  imports = i3Imports ++ [ ./nix-clean.nix ];
+  imports = [
+    ./bacon.nix
+    ./diff-so-fancy.nix
+    ./direnv.nix
+    ./dunst.nix
+    ./ghostty.nix
+    ./git.nix
+    ./i3.nix
+    ./kitty.nix
+    ./nix-clean.nix
+    ./nvim.nix
+    # ./picom.nix
+    ./rofi.nix
+    ./tmux.nix
+    ./xdg.nix
+    ./zathura.nix
+    ./zsh.nix
+  ];
 
   targets.genericLinux.nixGL = {
     packages = import <nixgl> { inherit pkgs; };
     defaultWrapper = "mesa";
     installScripts = [ "mesa" ];
   };
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
-  home.username = "jcl24";
-  home.homeDirectory = "/home/jcl24";
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "24.05"; # Please read the comment before changing.
+  home = {
+    username = "jcl24";
+    homeDirectory = "/home/jcl24";
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-  home.packages = with pkgs; [
-    # terminal
-    # kitty
-    ghostty
-    kitty-themes
-    zsh
-    oh-my-zsh
-    tmux
-    texlab
+    # Do not change without first reading the Home Manager release notes.
+    stateVersion = "24.05";
 
-    # cmd utils
-    wget
-    curl
-    gnupg
-    git
-    htop
-    bottom
-    bat
-    eza
-    ripgrep
-    ripgrep-all
-    jaq
-    gh
-    nixpkgs-review
-    tdf
-    ddgr
-    w3m
-    wmctrl
-    fd
-    hexyl
-    autorandr
-    autorandr-launcher
-    maim
-    xclip
-    xdotool
-    # picom
-    _7zz-rar
-    webcamoid
-    brightnessctl
-    pomodoro
-    claude-code
+    # Packages with a programs.* or services.* module are installed by that
+    # module and are not listed here.
+    packages = with pkgs; [
+      # terminal
+      kitty-themes
+      oh-my-zsh
+      texlab
 
-    # audio: clickable tray applet to pick the output device + full mixer
-    pasystray
-    pavucontrol
+      # cmd utils
+      wget
+      curl
+      gnupg
+      htop
+      bottom
+      bat
+      eza
+      ripgrep
+      ripgrep-all
+      jaq
+      gh
+      tdf
+      ddgr
+      w3m
+      wmctrl
+      fd
+      hexyl
+      autorandr
+      autorandr-launcher
+      maim
+      xclip
+      xdotool
+      # picom
+      _7zz-rar
+      webcamoid
+      brightnessctl
+      pomodoro
+      claude-code
+      (writeShellScriptBin "sp" (builtins.readFile sp))
+      savepoint
 
-    # nix utils
-    nh
-    any-nix-shell
-    direnv
-    nixpkgs-review
-    gnomeExtensions.window-calls
+      # audio: clickable tray applet to pick the output device + full mixer
+      pasystray
+      pavucontrol
 
-    # # rust
-    # rustup
-    # gcc
-    # bacon
+      # nix utils
+      nh
+      any-nix-shell
+      nixpkgs-review
+      gnomeExtensions.window-calls
 
-    # # python
-    # python3
-    pyright
+      # # rust
+      # rustup
+      # gcc
 
-    # apps
-    (config.lib.nixGL.wrap firefox)
-    obsidian
-    teams-for-linux
-    zathura
-    libreoffice
-    thunderbird
-    gnome-tweaks
-    rofi
-    # mathematica
-    servo
-    librewolf
-    signal-desktop
-    feh
-    # discord
-    chromium
-    gimp
-    spotify
-    zotero
-    # zotero plugin deps
-    djvulibre
-    ocrmypdf
-    tesseract
-    qpdf
-    pngquant
+      # # python
+      # python3
+      pyright
 
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # nerdfonts.override { fonts = [ "Hack" ]; }
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-    (pkgs.writeShellScriptBin "sp" (builtins.readFile sp))
-    savepoint
-  ];
-
-  nixpkgs.config = {
-      allowUnfreePredicate =
-        pkg:
-        builtins.elem (lib.getName pkg) [
-          "obsidian"
-          "mathematica"
-          "7zz"
-          "discord"
-          "spotify"
-          "uasm"
-          "claude-code"
-          "firefox-esr-140-bin-unwrapped"
-        ];
-        permittedInsecurePackages = [
-            "firefox-esr-140-bin-unwrapped-140.17.0esr"
-        ];
+      # apps
+      (config.lib.nixGL.wrap firefox)
+      obsidian
+      teams-for-linux
+      libreoffice
+      thunderbird
+      gnome-tweaks
+      # mathematica
+      servo
+      librewolf
+      signal-desktop
+      feh
+      # discord
+      chromium
+      gimp
+      spotify
+      zotero
+      # zotero plugin deps
+      djvulibre
+      ocrmypdf
+      tesseract
+      qpdf
+      pngquant
+    ];
   };
 
+  nixpkgs.config = {
+    allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "obsidian"
+        "mathematica"
+        "7zz"
+        "discord"
+        "spotify"
+        "uasm"
+        "claude-code"
+        "firefox-esr-140-bin-unwrapped"
+      ];
+    permittedInsecurePackages = [
+      "firefox-esr-140-bin-unwrapped-140.17.0esr"
+    ];
+  };
 
   nix = {
     package = pkgs.nix;
@@ -172,70 +159,11 @@ in
     gc.automatic = true;
   };
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-  };
-
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/jcl24/etc/profile.d/hm-session-vars.sh
-  #
-  home.sessionVariables = {
-    # EDITOR = "emacs";
-  };
-
-  # Override kitty.desktop to launch with tmux
-  xdg = import ./xdg.nix;
-
   # Let Home Manager install and manage itself.
-  programs = {
-    bacon = import ./bacon.nix;
-    direnv = import ./direnv.nix;
-    ghostty = import ./ghostty.nix;
-    git = import ./git.nix;
-    diff-so-fancy = import ./diff-so-fancy.nix;
-    kitty = import ./kitty.nix {
-      inherit config;
-      inherit pkgs;
-    };
-    neovim = import ./nvim.nix { inherit pkgs; };
-    rofi = import ./rofi.nix;
-    tmux = import ./tmux.nix { inherit pkgs; };
-    zathura = import ./zathura.nix;
-    zsh = import ./zsh.nix { inherit config; };
+  programs.home-manager.enable = true;
 
-    home-manager.enable = true;
-  };
-
-  services = {
-    # picom = import ./picom.nix;
-    dunst = import ./dunst.nix;
-    # Started from i3 (see i3.nix): graphical-session.target is never reached under i3.
-    protonmail-bridge.enable = true;
-  };
+  # Started from i3 (see i3.nix): graphical-session.target is never reached under i3.
+  services.protonmail-bridge.enable = true;
 
   dconf = {
     enable = true;

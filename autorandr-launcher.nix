@@ -1,23 +1,26 @@
 {
+  lib,
   stdenv,
   fetchFromGitHub,
   pkg-config,
-  pkgs,
+  autorandr,
   libx11,
   libxcb,
   libxrandr,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "autorandr-launcher";
-  version = "1.15"; # Update as needed
+  version = "1.15";
 
   src = fetchFromGitHub {
     owner = "phillipberndt";
     repo = "autorandr";
-    rev = "1.15"; # Or a release tag like "1.14"
-    sha256 = "sha256-8FMfy3GCN4z/TnfefU2DbKqV3W35I29/SuGGqeOrjNg="; # Replace with the actual hash!
+    tag = finalAttrs.version;
+    hash = "sha256-8FMfy3GCN4z/TnfefU2DbKqV3W35I29/SuGGqeOrjNg=";
   };
+
+  sourceRoot = "${finalAttrs.src.name}/contrib/autorandr_launcher";
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [
@@ -26,23 +29,25 @@ stdenv.mkDerivation rec {
     libxrandr
   ];
 
-  sourceRoot = "${src.name}/contrib/autorandr_launcher";
-
-  patchPhase = ''
+  postPatch = ''
     substituteInPlace autorandr_launcher.c \
-      --replace-fail /usr/bin/autorandr ${pkgs.autorandr}/bin/autorandr
+      --replace-fail /usr/bin/autorandr ${lib.getExe autorandr}
     substituteInPlace makefile \
-      --replace 'USER_DEFS="-DAUTORANDR_PATH=\"$(shell which autorandr 2>/dev/null)\""' \
-      'USER_DEFS="-DAUTORANDR_PATH=\"${pkgs.autorandr}/bin/autorandr\""'
-  '';
-
-  configurePhase = ''
-    cat autorandr_launcher.c
-    cat makefile
+      --replace-fail 'USER_DEFS="-DAUTORANDR_PATH=\"$(shell which autorandr 2>/dev/null)\""' \
+      'USER_DEFS="-DAUTORANDR_PATH=\"${lib.getExe autorandr}\""'
   '';
 
   installPhase = ''
-    mkdir -p $out/bin
-    cp autorandr-launcher $out/bin/
+    runHook preInstall
+    install -Dm755 autorandr-launcher -t $out/bin
+    runHook postInstall
   '';
-}
+
+  meta = {
+    description = "Daemon that runs autorandr when monitors are connected or disconnected";
+    homepage = "https://github.com/phillipberndt/autorandr";
+    license = lib.licenses.gpl3Plus;
+    mainProgram = "autorandr-launcher";
+    platforms = lib.platforms.linux;
+  };
+})

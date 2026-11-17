@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   vim-sage = pkgs.vimUtils.buildVimPlugin {
@@ -34,432 +34,433 @@ let
   # ACP adapter that bridges avante.nvim <-> Claude Code. Built natively from
   # nix (no npx/runtime download). Pure JS; its node shebang is patched to the
   # nix nodejs, so it runs without node on PATH.
-  claude-code-acp = pkgs.buildNpmPackage rec {
+  claude-code-acp = pkgs.buildNpmPackage (finalAttrs: {
     pname = "claude-code-acp";
     version = "0.16.2";
     src = pkgs.fetchFromGitHub {
       owner = "zed-industries";
       repo = "claude-code-acp";
-      rev = "v${version}";
+      tag = "v${finalAttrs.version}";
       hash = "sha256-NiUlTFNA9q56KoDb/2qan2wt7x4ls2IPBUcY3QHj3WA=";
     };
     npmDepsHash = "sha256-c8/dfHKY6BTNHMfkQs8+nOUefiy6QVUZ5+h/Hf+3Gsc=";
     dontCheckForBrokenSymlinks = true;
-  };
-
+  });
 in
 {
-  enable = true;
-  vimAlias = true;
-  defaultEditor = true;
-  withRuby = false;
-  coc = {
+  programs.neovim = {
     enable = true;
-    settings = {
-      coc.preferences.formatOnSaveFiletypes = [
-        "nix"
-        "rust"
-        "python"
-        "fsharp"
-        "c"
-      ];
-      rust-analyzer.enable = true;
-      rust-analyzer.cargo.allFeatures = true;
-      rust-analyzer.cargo.cfgs = [ ]; # https://github.com/rust-lang/rust-analyzer/issues/19658
-      languageserver = {
-        nix = {
-          command = "nixd";
-          filetypes = [ "nix" ];
-          settings.nixd.formatting.command = [ "nixfmt" ];
+    vimAlias = true;
+    defaultEditor = true;
+    withRuby = false;
+    coc = {
+      enable = true;
+      settings = {
+        coc.preferences.formatOnSaveFiletypes = [
+          "nix"
+          "rust"
+          "python"
+          "fsharp"
+          "c"
+        ];
+        rust-analyzer = {
+          enable = true;
+          cargo.allFeatures = true;
+          cargo.cfgs = [ ]; # https://github.com/rust-lang/rust-analyzer/issues/19658
         };
-        python = {
-          command = "pyright";
-          filetypes = [ "py" ];
+        languageserver = {
+          nix = {
+            command = "nixd";
+            filetypes = [ "nix" ];
+            settings.nixd.formatting.command = [ "nixfmt" ];
+          };
+          python = {
+            command = "pyright";
+            filetypes = [ "py" ];
+          };
+          c = {
+            command = "clangd";
+            filetypes = [
+              "c"
+              "cpp"
+            ];
+            settings.clangd.formatting.command = [
+              "clang-format"
+            ];
+          };
         };
-        c = {
-          command = "clangd";
-          filetypes = [
-            "c"
-            "cpp"
-          ];
-          settings.clangd.formatting.command = [
-            "clang-format"
-          ];
-        };
+        snippets.ultisnips.directories = [ "~/.config/home-manager" ];
       };
-      snippets.ultisnips.directories = [ "~/.config/home-manager" ];
-    };
-    pluginConfig = ''
-      " Use `[g` and `]g` to navigate diagnostics
-      " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
-      nmap <silent> [g <Plug>(coc-diagnostic-prev)
-      nmap <silent> ]g <Plug>(coc-diagnostic-next)
+      pluginConfig = ''
+        " Use `[g` and `]g` to navigate diagnostics
+        " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+        nmap <silent> [g <Plug>(coc-diagnostic-prev)
+        nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-      " GoTo code navigation
-      nmap <silent> gd <Plug>(coc-definition)
-      nmap <silent> gy <Plug>(coc-type-definition)
-      nmap <silent> gi <Plug>(coc-implementation)
-      nmap <silent> gr <Plug>(coc-references)
+        " GoTo code navigation
+        nmap <silent> gd <Plug>(coc-definition)
+        nmap <silent> gy <Plug>(coc-type-definition)
+        nmap <silent> gi <Plug>(coc-implementation)
+        nmap <silent> gr <Plug>(coc-references)
 
-      " Use K to show documentation in preview window
-      nnoremap <silent> K :call ShowDocumentation()<CR>
+        " Use K to show documentation in preview window
+        nnoremap <silent> K :call ShowDocumentation()<CR>
 
-      function! ShowDocumentation()
-        if CocAction('hasProvider', 'hover')
-          call CocActionAsync('doHover')
-        else
-          call feedkeys('K', 'in')
-        endif
-      endfunction
-
-      " Symbol renaming
-      nmap <leader>rn <Plug>(coc-rename)
-
-      " Remap keys for applying code actions at the cursor position
-      nmap <leader>ac  <Plug>(coc-codeaction-cursor)
-
-      " Remap keys for applying refactor code actions
-      nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
-
-      " Apply the most preferred quickfix action to fix diagnostic on the current line
-      nmap <leader>qf  <Plug>(coc-fix-current)
-    '';
-  };
-  withPython3 = true;
-  plugins = with pkgs.vimPlugins; [
-    {
-      plugin = coc-nvim;
-      type = "viml";
-      config = ''
-        noremap <silent> <C-t> :10split <bar> :term <CR>
-        tnoremap <Esc> <C-\><C-n>
-      '';
-      # "allow coc completion on tab
-      # inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<TAB>"
-    }
-    coc-rust-analyzer
-    # coc-nix
-    coc-json
-    coc-sh
-    coc-pyright
-    coc-vimtex
-    {
-      plugin = coc-snippets;
-      type = "viml";
-      config = ''
-        inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#_select_confirm() : coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',\'\'])\<CR>" : CheckBackspace() ? "\<TAB>" : coc#refresh()
-
-        function! CheckBackspace() abort
-            let col = col('.') - 1
-            return !col || getline('.')[col - 1]  =~# '\s'
-        endfunction
-
-        let g:coc_snippet_next = '<tab>'
-      '';
-    }
-    coc-texlab
-    Ionide-vim
-    vim-sage
-    plenary-nvim
-    {
-      plugin = indentLine;
-      type = "viml";
-      config = ''
-        " indentLine draws its guides via conceal and forces
-        " conceallevel=2 concealcursor=inc in every buffer it decorates,
-        " which overrides the TeX conceal settings below; keep it out of TeX
-        let g:indentLine_fileTypeExclude = ['tex']
-      '';
-    }
-    vim-system-copy
-    {
-      plugin = vim-tmux-navigator;
-      type = "viml";
-      config = ''
-        let g:tmux_navigator_disable_when_zoomed = 1
-      '';
-    }
-    vim-obsession
-    {
-      plugin = vim-rainbow;
-      type = "viml";
-      config = ''
-        let g:rainbow_active = 1
-        " rainbow's operator matches (op_lv0 at top level, op_lvN inside its
-        " paren/brace regions) swallow the $ delimiters, so vimtex's $...$ and
-        " $$...$$ math zones never start; rainbow is unloaded in tex buffers by
-        " after/plugin/rainbow-tex.vim (see xdg.nix), which runs after every
-        " Syntax/ColorScheme re-hook, unlike a one-off BufEnter clear here
-      '';
-    }
-    lualine-nvim
-    nvim-web-devicons
-    vim-commentary
-    {
-      plugin = vim-oscyank;
-      type = "viml";
-      config = ''
-        let g:system_copy_enable_osc52 = 1
-        let g:oscyank_term = 'tmux'
-      '';
-    }
-    {
-      plugin = vimtex;
-      type = "viml";
-      config = ''
-        " Filter out some compilation warning messages from QuickFix display
-        let g:vimtex_quickfix_ignore_filters = [
-              \ 'Underfull \\hbox',
-              \ 'Overfull \\hbox',
-              \ 'Underfull \\vbox',
-              \ 'Overfull \\vbox',
-              \ 'LaTeX Warning: .\+ float specifier changed to',
-              \ 'LaTeX hooks Warning',
-              \ 'Package siunitx Warning: Detected the "physics" package:',
-              \ 'Package hyperref Warning: Token not allowed in a PDF string',
-              \ 'Missing ',
-              \ 'Package biblatex Warning: Using fall-back bibtex backend:'
-              \]
-        let g:vimtex_view_method = 'zathura'
-        let g:vimtex_callback_progpath = '/home/jcl24/.nix-profile/bin/nvim'
-        let g:vimtex_compiler_latexmk_engines = {'_': '-lualatex'}
-
-        " Function to toggle vimtex_quickfix_mode
-        function! ToggleVimtexQuickfixMode()
-            if g:vimtex_quickfix_mode == 1
-                let g:vimtex_quickfix_mode = 0
-            else
-                let g:vimtex_quickfix_mode = 1
-            endif
-            echo "vimtex_quickfix_mode is now " . g:vimtex_quickfix_mode
-        endfunction
-
-        " Map Shift-Q to toggle vimtex_quickfix_mode
-        nnoremap <S-q> :call ToggleVimtexQuickfixMode()<CR>
-      '';
-    }
-    telescope-fzf-native-nvim
-    {
-      plugin = telescope-nvim;
-      type = "viml";
-      config = ''
-        nnoremap <C-p> <cmd>lua require('telescope.builtin').git_files()<cr>
-        nnoremap <C-g> <cmd>lua require('telescope.builtin').live_grep()<cr>
-        nnoremap <C-b> <cmd>lua require('telescope.builtin').buffers()<cr>
-        nnoremap <C-i> <cmd>lua require('telescope.builtin').find_files()<cr>
-      '';
-      # nnoremap <C-c> <cmd>lua bib_picker.telescope_cite_picker()<cr>
-    }
-    # {
-    #   plugin = telescope-bibtex;
-    #   config = "nnoremap <C-c> <cmd> lua require('telescope').extensions.bibtex.bibtex()<cr>";
-    # }
-    vim-multiple-cursors
-    {
-      plugin = gruvbox-material;
-      type = "viml";
-      config = "colorscheme gruvbox-material";
-    }
-    # obsidian-nvim
-    avante-nvim
-  ];
-  extraPackages = with pkgs; [
-    rust-analyzer
-    nixd
-  ];
-  extraConfig = ''
-    set mouse=
-    set guicursor=n-v-c-i:block
-
-    set tabstop=4
-    set softtabstop=4
-    set shiftwidth=4
-    set expandtab
-    set autoindent
-    syntax on
-    set number relativenumber
-    set shell=/usr/bin/zsh
-    set laststatus=2
-    set nohlsearch
-    set showcmd
-    set splitbelow
-    set splitright
-
-    nnoremap <S-Tab> :Lex<CR>
-    let g:netrw_banner = 0
-    let g:netrw_liststyle = 3
-    let g:netrw_browse_split = 4
-    let g:netrw_altv = 1
-    let g:netrw_winsize = 25
-
-    let g:netrw_fastbrowse = 0
-    autocmd FileType netrw setl bufhidden=wipe
-    function! CloseNetrw() abort
-      for bufn in range(1, bufnr('$'))
-        if bufexists(bufn) && getbufvar(bufn, '&filetype') ==# 'netrw'
-          silent! execute 'bwipeout ' . bufn
-          if getline(2) =~# '^" Netrw '
-            silent! bwipeout
+        function! ShowDocumentation()
+          if CocAction('hasProvider', 'hover')
+            call CocActionAsync('doHover')
+          else
+            call feedkeys('K', 'in')
           endif
-          return
-        endif
-      endfor
-    endfunction
-    augroup closeOnOpen
-      autocmd!
-      autocmd BufWinEnter * if getbufvar(winbufnr(winnr()), "&filetype") != "netrw"|call CloseNetrw()|endif
-    aug END
+        endfunction
 
-    set listchars=tab:➤\ ,trail:◆ et listchars=tab:➤\ ,trail:◆
+        " Symbol renaming
+        nmap <leader>rn <Plug>(coc-rename)
 
-    let filetypes = ['json']
-    if index(filetypes, &filetype) != -1
-        set conceallevel=0
-    endif
-    " Conceal maths as unicode in TeX except on the cursor line (FileType, not
-    " BufEnter, so it also applies to \input'd files without a .tex suffix)
-    autocmd FileType tex setlocal conceallevel=2 concealcursor=c
+        " Remap keys for applying code actions at the cursor position
+        nmap <leader>ac  <Plug>(coc-codeaction-cursor)
 
-    let g:fsharp#fsi_command = "/nix/store/2ashk2ig3vb8s54mpyc2w5dgr4saqcvj-dotnet-sdk-6.0.427/bin/dotnet fsi"
-    set shell=/home/jcl24/.nix-profile/bin/zsh
+        " Remap keys for applying refactor code actions
+        nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
 
-    " set T to go to last buffer
-    noremap T <C-^>
-  '';
-  initLua = ''
-    vim.opt.spell = true
-    vim.opt.spelllang = vim.env.NVIM_SPELLLANG or "en_gb"
+        " Apply the most preferred quickfix action to fix diagnostic on the current line
+        nmap <leader>qf  <Plug>(coc-fix-current)
+      '';
+    };
+    withPython3 = true;
+    plugins = with pkgs.vimPlugins; [
+      {
+        plugin = coc-nvim;
+        type = "viml";
+        config = ''
+          noremap <silent> <C-t> :10split <bar> :term <CR>
+          tnoremap <Esc> <C-\><C-n>
+        '';
+        # "allow coc completion on tab
+        # inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<TAB>"
+      }
+      coc-rust-analyzer
+      # coc-nix
+      coc-json
+      coc-sh
+      coc-pyright
+      coc-vimtex
+      {
+        plugin = coc-snippets;
+        type = "viml";
+        config = ''
+          inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#_select_confirm() : coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',\'\'])\<CR>" : CheckBackspace() ? "\<TAB>" : coc#refresh()
 
-    local config = {
-        options = {
-            icons_enabled = true,
-            theme = 'gruvbox-material',
-            component_separators = "",
-            section_separators = "",
-            disabled_filetypes = {
-                statusline = {},
-                winbar = {},
+          function! CheckBackspace() abort
+              let col = col('.') - 1
+              return !col || getline('.')[col - 1]  =~# '\s'
+          endfunction
+
+          let g:coc_snippet_next = '<tab>'
+        '';
+      }
+      coc-texlab
+      Ionide-vim
+      vim-sage
+      plenary-nvim
+      {
+        plugin = indentLine;
+        type = "viml";
+        config = ''
+          " indentLine draws its guides via conceal and forces
+          " conceallevel=2 concealcursor=inc in every buffer it decorates,
+          " which overrides the TeX conceal settings below; keep it out of TeX
+          let g:indentLine_fileTypeExclude = ['tex']
+        '';
+      }
+      vim-system-copy
+      {
+        plugin = vim-tmux-navigator;
+        type = "viml";
+        config = ''
+          let g:tmux_navigator_disable_when_zoomed = 1
+        '';
+      }
+      vim-obsession
+      {
+        plugin = vim-rainbow;
+        type = "viml";
+        config = ''
+          let g:rainbow_active = 1
+          " rainbow's operator matches (op_lv0 at top level, op_lvN inside its
+          " paren/brace regions) swallow the $ delimiters, so vimtex's $...$ and
+          " $$...$$ math zones never start; rainbow is unloaded in tex buffers by
+          " after/plugin/rainbow-tex.vim (see xdg.nix), which runs after every
+          " Syntax/ColorScheme re-hook, unlike a one-off BufEnter clear here
+        '';
+      }
+      lualine-nvim
+      nvim-web-devicons
+      vim-commentary
+      {
+        plugin = vim-oscyank;
+        type = "viml";
+        config = ''
+          let g:system_copy_enable_osc52 = 1
+          let g:oscyank_term = 'tmux'
+        '';
+      }
+      {
+        plugin = vimtex;
+        type = "viml";
+        config = ''
+          " Filter out some compilation warning messages from QuickFix display
+          let g:vimtex_quickfix_ignore_filters = [
+                \ 'Underfull \\hbox',
+                \ 'Overfull \\hbox',
+                \ 'Underfull \\vbox',
+                \ 'Overfull \\vbox',
+                \ 'LaTeX Warning: .\+ float specifier changed to',
+                \ 'LaTeX hooks Warning',
+                \ 'Package siunitx Warning: Detected the "physics" package:',
+                \ 'Package hyperref Warning: Token not allowed in a PDF string',
+                \ 'Missing ',
+                \ 'Package biblatex Warning: Using fall-back bibtex backend:'
+                \]
+          let g:vimtex_view_method = 'zathura'
+          let g:vimtex_callback_progpath = '/home/jcl24/.nix-profile/bin/nvim'
+          let g:vimtex_compiler_latexmk_engines = {'_': '-lualatex'}
+
+          " Function to toggle vimtex_quickfix_mode
+          function! ToggleVimtexQuickfixMode()
+              if g:vimtex_quickfix_mode == 1
+                  let g:vimtex_quickfix_mode = 0
+              else
+                  let g:vimtex_quickfix_mode = 1
+              endif
+              echo "vimtex_quickfix_mode is now " . g:vimtex_quickfix_mode
+          endfunction
+
+          " Map Shift-Q to toggle vimtex_quickfix_mode
+          nnoremap <S-q> :call ToggleVimtexQuickfixMode()<CR>
+        '';
+      }
+      telescope-fzf-native-nvim
+      {
+        plugin = telescope-nvim;
+        type = "viml";
+        config = ''
+          nnoremap <C-p> <cmd>lua require('telescope.builtin').git_files()<cr>
+          nnoremap <C-g> <cmd>lua require('telescope.builtin').live_grep()<cr>
+          nnoremap <C-b> <cmd>lua require('telescope.builtin').buffers()<cr>
+          nnoremap <C-i> <cmd>lua require('telescope.builtin').find_files()<cr>
+        '';
+        # nnoremap <C-c> <cmd>lua bib_picker.telescope_cite_picker()<cr>
+      }
+      # {
+      #   plugin = telescope-bibtex;
+      #   config = "nnoremap <C-c> <cmd> lua require('telescope').extensions.bibtex.bibtex()<cr>";
+      # }
+      vim-multiple-cursors
+      {
+        plugin = gruvbox-material;
+        type = "viml";
+        config = "colorscheme gruvbox-material";
+      }
+      # obsidian-nvim
+      avante-nvim
+    ];
+    extraPackages = with pkgs; [
+      rust-analyzer
+      nixd
+    ];
+    extraConfig = ''
+      set mouse=
+      set guicursor=n-v-c-i:block
+
+      set tabstop=4
+      set softtabstop=4
+      set shiftwidth=4
+      set expandtab
+      set autoindent
+      syntax on
+      set number relativenumber
+      set laststatus=2
+      set nohlsearch
+      set showcmd
+      set splitbelow
+      set splitright
+
+      nnoremap <S-Tab> :Lex<CR>
+      let g:netrw_banner = 0
+      let g:netrw_liststyle = 3
+      let g:netrw_browse_split = 4
+      let g:netrw_altv = 1
+      let g:netrw_winsize = 25
+
+      let g:netrw_fastbrowse = 0
+      autocmd FileType netrw setl bufhidden=wipe
+      function! CloseNetrw() abort
+        for bufn in range(1, bufnr('$'))
+          if bufexists(bufn) && getbufvar(bufn, '&filetype') ==# 'netrw'
+            silent! execute 'bwipeout ' . bufn
+            if getline(2) =~# '^" Netrw '
+              silent! bwipeout
+            endif
+            return
+          endif
+        endfor
+      endfunction
+      augroup closeOnOpen
+        autocmd!
+        autocmd BufWinEnter * if getbufvar(winbufnr(winnr()), "&filetype") != "netrw"|call CloseNetrw()|endif
+      aug END
+
+      set listchars=tab:➤\ ,trail:◆ et listchars=tab:➤\ ,trail:◆
+
+      let filetypes = ['json']
+      if index(filetypes, &filetype) != -1
+          set conceallevel=0
+      endif
+      " Conceal maths as unicode in TeX except on the cursor line (FileType, not
+      " BufEnter, so it also applies to \input'd files without a .tex suffix)
+      autocmd FileType tex setlocal conceallevel=2 concealcursor=c
+
+      set shell=${config.programs.zsh.package}/bin/zsh
+
+      " set T to go to last buffer
+      noremap T <C-^>
+    '';
+    initLua = ''
+      vim.opt.spell = true
+      vim.opt.spelllang = vim.env.NVIM_SPELLLANG or "en_gb"
+
+      local config = {
+          options = {
+              icons_enabled = true,
+              theme = 'gruvbox-material',
+              component_separators = "",
+              section_separators = "",
+              disabled_filetypes = {
+                  statusline = {},
+                  winbar = {},
+              },
+              ignore_focus = {},
+              always_divide_middle = true,
+              globalstatus = false,
+              refresh = {
+                  statusline = 1000,
+                  tabline = 1000,
+                  winbar = 1000,
+              }
+          },
+          sections = {
+              lualine_a = {'mode'},
+              lualine_b = {'branch', 'diff', 'diagnostics'},
+              lualine_c = {'buffers'},
+              lualine_x = {'searchcount'},
+              lualine_y = {'progress'},
+              lualine_z = {'location'}
+          },
+          inactive_sections = {
+              lualine_a = {},
+              lualine_b = {},
+              lualine_c = {'filename'},
+              lualine_x = {'location'},
+              lualine_y = {},
+              lualine_z = {}
+          },
+          tabline = {},
+          winbar = {},
+          inactive_winbar = {},
+          extensions = {}
+      }
+      require('lualine').setup(config)
+
+      _G.bib_picker = assert(dofile("${builtins.toString ./bibtex-fuzzy-find.lua}"))
+
+      require('telescope').setup{
+          defaults = {
+              mappings = {
+                  i = {
+                  ["<CR>"] = "select_default",
+                  }
+              },
+              layout_strategy = 'flex',
+              layout_config = {
+                  horizontal = {
+                      prompt_position = 'bottom',
+                      preview_width = 0.5,
+                  },
+                  vertical = {
+                      prompt_position = 'bottom',
+                      mirror = false,
+                      preview_height = 0.3,
+                  },
+                  flex = {
+                      flip_columns = 120,
+                  },
+                  width = 0.95,
+                  height = 0.95,
+                  preview_cutoff = 0,
+              },
+          },
+          extensions = {
+              fzf = {
+                  fuzzy = true,
+                  override_generic_sorter = true,
+                  override_file_sorter = true,
+                  case_mode = "smart_case",
+              }
+          }
+      }
+
+      vim.api.nvim_set_keymap(
+        "n",
+        "<C-c>",
+        "<cmd>lua bib_picker.telescope_cite_picker()<CR>",
+        { noremap = true, silent = true }
+      )
+
+      vim.api.nvim_create_autocmd({ "BufReadPost", "BufEnter" }, {
+        pattern = { "*.tex" },
+        callback = function(args)
+          -- Preload cache for this TeX file; runs once per file open (fast no-op if unchanged)
+          bib_picker.preload_for_tex(args.file)
+        end,
+      })
+
+      -- avante.nvim driving Claude Code over ACP, on your subscription.
+      -- The ACP adapter is the nix-built claude-code-acp (no npx/runtime download).
+      -- avante passes the adapter only PATH + the env vars listed here, so by
+      -- omitting ANTHROPIC_API_KEY the adapter can only authenticate via your
+      -- `claude` login (subscription); HOME lets `claude` find those credentials.
+      require('avante').setup {
+        provider = "claude-code-nix",
+        acp_providers = {
+          ["claude-code-nix"] = {
+            command = "${claude-code-acp}/bin/claude-code-acp",
+            args = {},
+            env = {
+              NODE_NO_WARNINGS = "1",
+              HOME = os.getenv("HOME"),
+              ACP_PATH_TO_CLAUDE_CODE_EXECUTABLE = vim.fn.exepath("claude"),
+              -- "default" (not bypassPermissions): Claude requests permission for
+              -- edits, which avante renders as a native diff you accept/reject.
+              -- bypassPermissions makes Claude write files directly, skipping the
+              -- diff UI entirely.
+              ACP_PERMISSION_MODE = "default",
             },
-            ignore_focus = {},
-            always_divide_middle = true,
-            globalstatus = false,
-            refresh = {
-                statusline = 1000,
-                tabline = 1000,
-                winbar = 1000,
-            }
-        },
-        sections = {
-            lualine_a = {'mode'},
-            lualine_b = {'branch', 'diff', 'diagnostics'},
-            lualine_c = {'buffers'},
-            lualine_x = {'searchcount'},
-            lualine_y = {'progress'},
-            lualine_z = {'location'}
-        },
-        inactive_sections = {
-            lualine_a = {},
-            lualine_b = {},
-            lualine_c = {'filename'},
-            lualine_x = {'location'},
-            lualine_y = {},
-            lualine_z = {}
-        },
-        tabline = {},
-        winbar = {},
-        inactive_winbar = {},
-        extensions = {}
-    }
-    require('lualine').setup(config)
-
-    _G.bib_picker = assert(dofile("${builtins.toString ./bibtex-fuzzy-find.lua}"))
-
-    require('telescope').setup{
-        defaults = {
-            mappings = {
-                i = {
-                ["<CR>"] = "select_default",
-                }
-            },
-            layout_strategy = 'flex',
-            layout_config = {
-                horizontal = {
-                    prompt_position = 'bottom',
-                    preview_width = 0.5,
-                },
-                vertical = {
-                    prompt_position = 'bottom',
-                    mirror = false,
-                    preview_height = 0.3,
-                },
-                flex = {
-                    flip_columns = 120,
-                },
-                width = 0.95,
-                height = 0.95,
-                preview_cutoff = 0,
-            },
-        },
-        extensions = {
-            fzf = {
-                fuzzy = true,
-                override_generic_sorter = true,
-                override_file_sorter = true,
-                case_mode = "smart_case",
-            }
-        }
-    }
-
-    vim.api.nvim_set_keymap(
-      "n",
-      "<C-c>",
-      "<cmd>lua bib_picker.telescope_cite_picker()<CR>",
-      { noremap = true, silent = true }
-    )
-
-    vim.api.nvim_create_autocmd({ "BufReadPost", "BufEnter" }, {
-      pattern = { "*.tex" },
-      callback = function(args)
-        -- Preload cache for this TeX file; runs once per file open (fast no-op if unchanged)
-        bib_picker.preload_for_tex(args.file)
-      end,
-    })
-
-    -- avante.nvim driving Claude Code over ACP, on your subscription.
-    -- The ACP adapter is the nix-built claude-code-acp (no npx/runtime download).
-    -- avante passes the adapter only PATH + the env vars listed here, so by
-    -- omitting ANTHROPIC_API_KEY the adapter can only authenticate via your
-    -- `claude` login (subscription); HOME lets `claude` find those credentials.
-    require('avante').setup {
-      provider = "claude-code-nix",
-      acp_providers = {
-        ["claude-code-nix"] = {
-          command = "${claude-code-acp}/bin/claude-code-acp",
-          args = {},
-          env = {
-            NODE_NO_WARNINGS = "1",
-            HOME = os.getenv("HOME"),
-            ACP_PATH_TO_CLAUDE_CODE_EXECUTABLE = vim.fn.exepath("claude"),
-            -- "default" (not bypassPermissions): Claude requests permission for
-            -- edits, which avante renders as a native diff you accept/reject.
-            -- bypassPermissions makes Claude write files directly, skipping the
-            -- diff UI entirely.
-            ACP_PERMISSION_MODE = "default",
           },
         },
-      },
-      windows = {
-        position = "right",
-        width = 40,
-        ask = { floating = true },
-      },
-      mappings = {
-        ask = "<leader>as",                 -- selection-aware ask (normal + visual)
-        toggle = { default = "<leader>ai" }, -- open/close the avante sidebar
-      },
-    }
-    vim.keymap.set("n", "<leader>ab", "<cmd>AvanteAsk<cr>",
-      { silent = true, desc = "Avante: ask (current buffer in context)" })
-  '';
-  # require"telescope".load_extension("bibtex")
+        windows = {
+          position = "right",
+          width = 40,
+          ask = { floating = true },
+        },
+        mappings = {
+          ask = "<leader>as",                 -- selection-aware ask (normal + visual)
+          toggle = { default = "<leader>ai" }, -- open/close the avante sidebar
+        },
+      }
+      vim.keymap.set("n", "<leader>ab", "<cmd>AvanteAsk<cr>",
+        { silent = true, desc = "Avante: ask (current buffer in context)" })
+    '';
+    # require"telescope".load_extension("bibtex")
+  };
 }

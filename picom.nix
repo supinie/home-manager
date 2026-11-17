@@ -1,11 +1,13 @@
 {
-  enable = true;
+  services.picom = {
+    enable = true;
 
-  backend = "glx";
-  vSync = true;
+    backend = "glx";
+    vSync = true;
 
-  settings = {
-    glx-no-stencil = true;
-    paint-on-overlay = true;
+    settings = {
+      glx-no-stencil = true;
+      paint-on-overlay = true;
+    };
   };
 }
