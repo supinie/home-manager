@@ -107,6 +107,10 @@ in
           command = "picom -b";
           notification = false;
         }
+        {
+          command = "systemctl --user start protonmail-bridge.service";
+          notification = false;
+        }
       ];
 
       keybindings = lib.mkOptionDefault {

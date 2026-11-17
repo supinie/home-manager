@@ -233,6 +233,8 @@ in
   services = {
     # picom = import ./picom.nix;
     dunst = import ./dunst.nix;
+    # Started from i3 (see i3.nix): graphical-session.target is never reached under i3.
+    protonmail-bridge.enable = true;
   };
 
   dconf = {
