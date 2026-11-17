@@ -88,7 +88,7 @@ in
           notification = false;
         }
         {
-          command = "autorandr-loader";
+          command = "autorandr-launcher";
           notification = false;
         }
         {
