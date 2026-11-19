@@ -321,6 +321,14 @@ in
       " BufEnter, so it also applies to \input'd files without a .tex suffix)
       autocmd FileType tex setlocal conceallevel=2 concealcursor=c
 
+      " Silently reload files changed on disk when the buffer has no unsaved edits;
+      " keep the usual prompt when it does.
+      augroup autoReload
+        autocmd!
+        autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() !=# 'c' && getcmdwintype() ==# "" | silent! checktime | endif
+        autocmd FileChangedShell * let v:fcs_choice = getbufvar(str2nr(expand('<abuf>')), '&modified') ? 'ask' : 'reload'
+      augroup END
+
       set shell=${config.programs.zsh.package}/bin/zsh
 
       " set T to go to last buffer
